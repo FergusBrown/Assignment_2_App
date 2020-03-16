@@ -1,0 +1,5 @@
+org.spin.gaitlib
+drawable ic_launcher
+layout main
+string app_name
+string hello
