@@ -1,12 +1,12 @@
 -- Merging decision tree log ---
 manifest
-ADDED from C:\Users\fergu\AndroidStudioProjects\Assignment2App\gaitLib\src\main\AndroidManifest.xml:2:1-14:12
-INJECTED from C:\Users\fergu\AndroidStudioProjects\Assignment2App\gaitLib\src\main\AndroidManifest.xml:2:1-14:12
-INJECTED from C:\Users\fergu\AndroidStudioProjects\Assignment2App\gaitLib\src\main\AndroidManifest.xml:2:1-14:12
-INJECTED from C:\Users\fergu\AndroidStudioProjects\Assignment2App\gaitLib\src\main\AndroidManifest.xml:2:1-14:12
-INJECTED from C:\Users\fergu\AndroidStudioProjects\Assignment2App\gaitLib\src\main\AndroidManifest.xml:2:1-14:12
-INJECTED from C:\Users\fergu\AndroidStudioProjects\Assignment2App\gaitLib\src\main\AndroidManifest.xml:2:1-14:12
-INJECTED from C:\Users\fergu\AndroidStudioProjects\Assignment2App\gaitLib\src\main\AndroidManifest.xml:2:1-14:12
+ADDED from C:\Users\fergu\AndroidStudioProjects\Assignment2App\gaitLib\src\main\AndroidManifest.xml:2:1-15:12
+INJECTED from C:\Users\fergu\AndroidStudioProjects\Assignment2App\gaitLib\src\main\AndroidManifest.xml:2:1-15:12
+INJECTED from C:\Users\fergu\AndroidStudioProjects\Assignment2App\gaitLib\src\main\AndroidManifest.xml:2:1-15:12
+INJECTED from C:\Users\fergu\AndroidStudioProjects\Assignment2App\gaitLib\src\main\AndroidManifest.xml:2:1-15:12
+INJECTED from C:\Users\fergu\AndroidStudioProjects\Assignment2App\gaitLib\src\main\AndroidManifest.xml:2:1-15:12
+INJECTED from C:\Users\fergu\AndroidStudioProjects\Assignment2App\gaitLib\src\main\AndroidManifest.xml:2:1-15:12
+INJECTED from C:\Users\fergu\AndroidStudioProjects\Assignment2App\gaitLib\src\main\AndroidManifest.xml:2:1-15:12
 	package
 		ADDED from C:\Users\fergu\AndroidStudioProjects\Assignment2App\gaitLib\src\main\AndroidManifest.xml:3:5-31
 		INJECTED from C:\Users\fergu\AndroidStudioProjects\Assignment2App\gaitLib\src\main\AndroidManifest.xml
@@ -21,12 +21,18 @@ INJECTED from C:\Users\fergu\AndroidStudioProjects\Assignment2App\gaitLib\src\ma
 		ADDED from C:\Users\fergu\AndroidStudioProjects\Assignment2App\gaitLib\src\main\AndroidManifest.xml:4:5-28
 		INJECTED from C:\Users\fergu\AndroidStudioProjects\Assignment2App\gaitLib\src\main\AndroidManifest.xml
 		INJECTED from C:\Users\fergu\AndroidStudioProjects\Assignment2App\gaitLib\src\main\AndroidManifest.xml
+uses-permission#android.permission.WAKE_LOCK
+ADDED from C:\Users\fergu\AndroidStudioProjects\Assignment2App\gaitLib\src\main\AndroidManifest.xml:8:5-67
+	android:name
+		ADDED from C:\Users\fergu\AndroidStudioProjects\Assignment2App\gaitLib\src\main\AndroidManifest.xml:8:22-65
+uses-permission#android.permission.WRITE_EXTERNAL_STORAGE
+ADDED from C:\Users\fergu\AndroidStudioProjects\Assignment2App\gaitLib\src\main\AndroidManifest.xml:9:5-80
+	android:name
+		ADDED from C:\Users\fergu\AndroidStudioProjects\Assignment2App\gaitLib\src\main\AndroidManifest.xml:9:22-78
 application
-ADDED from C:\Users\fergu\AndroidStudioProjects\Assignment2App\gaitLib\src\main\AndroidManifest.xml:9:5-12:19
+ADDED from C:\Users\fergu\AndroidStudioProjects\Assignment2App\gaitLib\src\main\AndroidManifest.xml:11:5-13:19
 	android:label
-		ADDED from C:\Users\fergu\AndroidStudioProjects\Assignment2App\gaitLib\src\main\AndroidManifest.xml:11:9-41
-	android:icon
-		ADDED from C:\Users\fergu\AndroidStudioProjects\Assignment2App\gaitLib\src\main\AndroidManifest.xml:10:9-45
+		ADDED from C:\Users\fergu\AndroidStudioProjects\Assignment2App\gaitLib\src\main\AndroidManifest.xml:12:9-41
 uses-sdk
 INJECTED from C:\Users\fergu\AndroidStudioProjects\Assignment2App\gaitLib\src\main\AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from C:\Users\fergu\AndroidStudioProjects\Assignment2App\gaitLib\src\main\AndroidManifest.xml

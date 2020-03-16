@@ -13,6 +13,7 @@ android {
         }
 
         ndk {
+            abiFilters "armeabi", "armeabi-v7a", "x86", "x86_64"
             moduleName "spectral-analysis"
         }
     }
@@ -21,6 +22,12 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
         }
     }
 }
