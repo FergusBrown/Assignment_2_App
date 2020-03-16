@@ -32,6 +32,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -45,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
     // Database reference initialisation
     FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
 
-    private DatabaseReference mDatabaseReference = mDatabase.getReference().child("Accelerometer Data");
+    private DatabaseReference mDatabaseReference = mDatabase.getReference().child("Activity Data");
 
     /***********Begin definitions for Activity API************/
 
@@ -73,10 +74,11 @@ public class MainActivity extends AppCompatActivity {
     /***********End definitions for Activity API************/
 
 
-
+    TextView status;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        status = findViewById(R.id.status);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -108,6 +110,30 @@ public class MainActivity extends AppCompatActivity {
                 .setActivityType(DetectedActivity.WALKING)
                 .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_EXIT)
                 .build());
+        activityTransitionList.add(new ActivityTransition.Builder()
+                .setActivityType(DetectedActivity.STILL)
+                .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_ENTER)
+                .build());
+        activityTransitionList.add(new ActivityTransition.Builder()
+                .setActivityType(DetectedActivity.STILL)
+                .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_EXIT)
+                .build());
+        activityTransitionList.add(new ActivityTransition.Builder()
+                .setActivityType(DetectedActivity.ON_BICYCLE)
+                .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_ENTER)
+                .build());
+        activityTransitionList.add(new ActivityTransition.Builder()
+                .setActivityType(DetectedActivity.ON_BICYCLE)
+                .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_EXIT)
+                .build());
+        activityTransitionList.add(new ActivityTransition.Builder()
+                .setActivityType(DetectedActivity.IN_VEHICLE)
+                .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_ENTER)
+                .build());
+        activityTransitionList.add(new ActivityTransition.Builder()
+                .setActivityType(DetectedActivity.IN_VEHICLE)
+                .setActivityTransition(ActivityTransition.ACTIVITY_TRANSITION_EXIT)
+                .build());
 
         // Initialize PendingIntent that will be triggered when a activity transition occurs.
         Intent intent = new Intent(TRANSITIONS_RECEIVER_ACTION);
@@ -125,9 +151,17 @@ public class MainActivity extends AppCompatActivity {
                 new IntentFilter(TRANSITIONS_RECEIVER_ACTION)
         );
 
+
+        //enableActivityTransitions();
         Log.d(TAG, "App initialized.");
     }
 
+
+    @Override
+    protected void onResume() {
+        enableActivityTransitions();
+        super.onResume();
+    }
 
     @Override
     protected void onPause() {
@@ -164,8 +198,16 @@ public class MainActivity extends AppCompatActivity {
     // handles list creation
     private static String toActivityString(int activity) {
         switch (activity) {
+            case DetectedActivity.STILL:
+                return "STILL";
             case DetectedActivity.WALKING:
                 return "WALKING";
+            case DetectedActivity.RUNNING:
+                return "RUNNING";
+            case DetectedActivity.IN_VEHICLE:
+                return "IN VEHICLE";
+            case DetectedActivity.ON_BICYCLE:
+                return "ON BICYCLE";
             default:
                 return "UNKNOWN";
         }
@@ -206,7 +248,7 @@ public class MainActivity extends AppCompatActivity {
                 new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void result) {
-                        //activityTrackingEnabled = true;
+                        activityTrackingEnabled = true;
                         Log.d(TAG, "Enable Complete");
                     }
                 });
@@ -265,6 +307,8 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onReceive(Context context, Intent intent) {
+            String activityType, transitionType;
+
 
             Log.d(TAG, "onReceive Called");
 
@@ -279,11 +323,13 @@ public class MainActivity extends AppCompatActivity {
                 ActivityTransitionResult result = ActivityTransitionResult.extractResult(intent);
 
                 for (ActivityTransitionEvent event : result.getTransitionEvents()) {
+                    activityType = toActivityString(event.getActivityType());
+                    transitionType = toTransitionType(event.getTransitionType());
                     //continue only if the activity happened in the last 30 seconds
                     //for some reason callbacks are received for old activities when the receiver is registered
                     if(((SystemClock.elapsedRealtime()-(event.getElapsedRealTimeNanos()/1000000))/1000) <= 30) {
                         //activity transition is legit. Do stuff here.
-                        transitionHandler(event.getActivityType(), event.getTransitionType());
+                        transitionHandler(activityType, transitionType);
                     }
 
                 }
@@ -294,9 +340,9 @@ public class MainActivity extends AppCompatActivity {
     // Decides what to do when a transition occurs
     // If entering walk then start gaitAnalysis service and write cadence data to file
     // If exiting walk end gaitAnalysis service and upload data to database
-    private void transitionHandler(int activityType, int transitionType) {
-        String info = "Transition: " + toActivityString(activityType) +
-                " (" + toTransitionType(transitionType) + ")" + "   " +
+    private void transitionHandler(String activityType, String transitionType) {
+        String info = "Transition: " + activityType +
+                " (" + transitionType + ")" + "   " +
                 new SimpleDateFormat("HH:mm:ss", Locale.UK).format(new Date());
 
         Log.d(TAG, info);
