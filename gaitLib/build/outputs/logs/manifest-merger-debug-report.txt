@@ -1,12 +1,12 @@
 -- Merging decision tree log ---
 manifest
-ADDED from C:\Users\fergu\AndroidStudioProjects\Assignment2App\gaitLib\src\main\AndroidManifest.xml:2:1-15:12
-INJECTED from C:\Users\fergu\AndroidStudioProjects\Assignment2App\gaitLib\src\main\AndroidManifest.xml:2:1-15:12
-INJECTED from C:\Users\fergu\AndroidStudioProjects\Assignment2App\gaitLib\src\main\AndroidManifest.xml:2:1-15:12
-INJECTED from C:\Users\fergu\AndroidStudioProjects\Assignment2App\gaitLib\src\main\AndroidManifest.xml:2:1-15:12
-INJECTED from C:\Users\fergu\AndroidStudioProjects\Assignment2App\gaitLib\src\main\AndroidManifest.xml:2:1-15:12
-INJECTED from C:\Users\fergu\AndroidStudioProjects\Assignment2App\gaitLib\src\main\AndroidManifest.xml:2:1-15:12
-INJECTED from C:\Users\fergu\AndroidStudioProjects\Assignment2App\gaitLib\src\main\AndroidManifest.xml:2:1-15:12
+ADDED from C:\Users\fergu\AndroidStudioProjects\Assignment2App\gaitLib\src\main\AndroidManifest.xml:2:1-16:12
+INJECTED from C:\Users\fergu\AndroidStudioProjects\Assignment2App\gaitLib\src\main\AndroidManifest.xml:2:1-16:12
+INJECTED from C:\Users\fergu\AndroidStudioProjects\Assignment2App\gaitLib\src\main\AndroidManifest.xml:2:1-16:12
+INJECTED from C:\Users\fergu\AndroidStudioProjects\Assignment2App\gaitLib\src\main\AndroidManifest.xml:2:1-16:12
+INJECTED from C:\Users\fergu\AndroidStudioProjects\Assignment2App\gaitLib\src\main\AndroidManifest.xml:2:1-16:12
+INJECTED from C:\Users\fergu\AndroidStudioProjects\Assignment2App\gaitLib\src\main\AndroidManifest.xml:2:1-16:12
+INJECTED from C:\Users\fergu\AndroidStudioProjects\Assignment2App\gaitLib\src\main\AndroidManifest.xml:2:1-16:12
 	package
 		ADDED from C:\Users\fergu\AndroidStudioProjects\Assignment2App\gaitLib\src\main\AndroidManifest.xml:3:5-31
 		INJECTED from C:\Users\fergu\AndroidStudioProjects\Assignment2App\gaitLib\src\main\AndroidManifest.xml
@@ -30,7 +30,9 @@ ADDED from C:\Users\fergu\AndroidStudioProjects\Assignment2App\gaitLib\src\main\
 	android:name
 		ADDED from C:\Users\fergu\AndroidStudioProjects\Assignment2App\gaitLib\src\main\AndroidManifest.xml:9:22-78
 application
-ADDED from C:\Users\fergu\AndroidStudioProjects\Assignment2App\gaitLib\src\main\AndroidManifest.xml:11:5-13:19
+ADDED from C:\Users\fergu\AndroidStudioProjects\Assignment2App\gaitLib\src\main\AndroidManifest.xml:11:5-14:19
+	android:requestLegacyExternalStorage
+		ADDED from C:\Users\fergu\AndroidStudioProjects\Assignment2App\gaitLib\src\main\AndroidManifest.xml:13:9-52
 	android:label
 		ADDED from C:\Users\fergu\AndroidStudioProjects\Assignment2App\gaitLib\src\main\AndroidManifest.xml:12:9-41
 uses-sdk
