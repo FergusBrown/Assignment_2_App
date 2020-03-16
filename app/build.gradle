@@ -35,4 +35,7 @@ dependencies {
     implementation project(path: ':gaitLib')
 
     implementation 'com.getkeepsafe.relinker:relinker:1.2.3'
+
+    // services required for recognition of activities
+    implementation 'com.google.android.gms:play-services-location:17.0.0'
 }
