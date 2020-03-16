@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "917499859998",
+    "firebase_url": "https://assignment-2-app.firebaseio.com",
+    "project_id": "assignment-2-app",
+    "storage_bucket": "assignment-2-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:917499859998:android:66a3743142e182faa14a0f",
+        "android_client_info": {
+          "package_name": "com.ewireless.assignment2app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "917499859998-vii7p90245sviq5221i8tqpei0gc5dq7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCD-bwE3rKsrJPLCuWMykcA64Y-CUHC7zM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "917499859998-vii7p90245sviq5221i8tqpei0gc5dq7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
