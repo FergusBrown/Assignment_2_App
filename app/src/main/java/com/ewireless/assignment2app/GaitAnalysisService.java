@@ -2,13 +2,24 @@
 package com.ewireless.assignment2app;
 
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
+import android.util.Log;
+import android.widget.TextView;
+import android.widget.TextView;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import org.spin.gaitlib.GaitAnalysis;
 import org.spin.gaitlib.core.GaitData;
@@ -16,7 +27,31 @@ import org.spin.gaitlib.core.IGaitUpdateListener;
 import org.spin.gaitlib.filter.FilterNotSetException;
 import org.spin.gaitlib.gait.IClassifierModelLoadingListener;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
+import static weka.core.mathematicalexpression.sym.error;
+
 public class GaitAnalysisService extends Service {
+
+    // Database reference initialisation
+    FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
+
+    public static final String masterRef = "Cadence Data";
+    private DatabaseReference cadenceReference = mDatabase.getReference().child(masterRef);
+
+
+    // Tag for log prints
+    private final static String TAG = "GaitAnalysisService";
+
+    //public float cadence;
+
+    // broadcasr receiver for gait analysis
+    private final GaitAnalysisServiceReceiver receiver = new GaitAnalysisServiceReceiver();
+
+    /******************** End of new definitions added ************************/
+
 
     public static final String GAIT_UPDATE = "spin.gaitlib.GaitAnalysisService.GAIT_UPDATE";
     public static final String CADENCE = "spin.gaitlib.GaitAnalysisService.CADENCE";
@@ -24,6 +59,8 @@ public class GaitAnalysisService extends Service {
     public static final String GAIT_ALL = "spin.gaitlib.GaitAnalysisService.GAIT_ALL";
     public static final String GAITLIB_STATUS_UPDATE = "spin.gaitlib.GaitAnalysisService.GAITLIB_STATUS_UPDATE";
     public static final String GAITLIB_STATUS_MESSAGE = "spin.gaitlib.GaitAnalysisService.GAITLIB_STATUS_MESSAGE";
+
+
 
     private WakeLock wakeLock;
 
@@ -84,7 +121,19 @@ public class GaitAnalysisService extends Service {
                 });
 
         // windowSize is the windows used for analysis, sampling interval is the number of times the system analyses and outputs the current cadence.
-        mGaitAnalysis.startGaitAnalysis(2000, 100);
+        mGaitAnalysis.startGaitAnalysis(2000, 1000);
+
+        /*********** New onCreate content begin *********************/
+
+        IntentFilter gaitUpdateFilter = new IntentFilter(
+                GaitAnalysisService.GAIT_UPDATE);
+        registerReceiver(receiver, gaitUpdateFilter);
+        IntentFilter gaitLibStatusUpdateFilter = new IntentFilter(
+                GaitAnalysisService.GAITLIB_STATUS_UPDATE);
+        registerReceiver(receiver, gaitLibStatusUpdateFilter);
+
+        /********* New onCreate content end ******************/
+
         super.onCreate();
     }
 
@@ -93,6 +142,7 @@ public class GaitAnalysisService extends Service {
         wakeLock.release();
         mGaitAnalysis.stopGaitAnalysis();
         unregisterSensorListeners();
+        unregisterReceiver(receiver);
         clearCache();
         super.onDestroy();
     }
@@ -108,6 +158,123 @@ public class GaitAnalysisService extends Service {
         SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         sensorManager.unregisterListener(mGaitAnalysis.getSignalListener());
     }
+
+
+
+
+    /************** New methods *****************/
+
+
+    public class GaitAnalysisServiceReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (action == null) {
+                return;
+            }
+
+            if (GaitAnalysisService.GAIT_UPDATE.equals(action)) {
+                float cadence = intent.getFloatExtra(GaitAnalysisService.CADENCE, 0);
+                //gait = intent.getStringExtra(GaitAnalysisService.GAIT);
+
+
+                processCadence(cadence);
+                /*Log.d(TAG, String.format("%.1f Hz", cadence));
+                DatabaseReference newRef = cadenceReference.push();
+                newRef.setValue(cadence);*/
+                //text_gait.setText(gait);
+
+                /*if (gait != null && cadence > 0) {
+                    gaits.add(0, gait);
+                    gaitListAdapter.notifyDataSetChanged();
+                }*/
+            } else if (GaitAnalysisService.GAITLIB_STATUS_UPDATE.equals(action)) {
+                String message = intent
+                        .getStringExtra(GaitAnalysisService.GAITLIB_STATUS_MESSAGE);
+                Log.d(TAG, message);
+            }
+
+        }
+
+    }
+
+    private int secondCount = 0;
+    private boolean isWalking = false;
+    // cadence threshold frequency for detecting a walk
+    final private double cadenceThreshold = 0.4;
+    final private int secondThreshold = 5;
+
+    private void processCadence(float cadence) {
+
+
+        // If walking then start uploading to database
+        /// Otherwise
+        if(isWalking) {
+            handleWalking(cadence);
+        } else {
+            handleNotWalking(cadence);
+        }
+    }
+
+
+    private String timeStamp;
+
+    private void handleWalking(float cadence) {
+
+        DatabaseReference timeRef = mDatabase.getReference(masterRef).child(timeStamp);
+
+        // return if not at 3 and reset if less than threshold
+        if(cadence >= cadenceThreshold) {
+            secondCount = 0;
+        } else {
+            // return without doing anything if 3 seconds have not passed
+            while(secondCount < secondThreshold) {
+                secondCount++;
+            }
+
+            if (secondCount == secondThreshold) {
+                secondCount = 0;
+                isWalking = false;
+                for (int i = 0; i < secondThreshold; i++) {
+                    String key = timeRef.getKey();
+                    timeRef.child(key).removeValue();
+                }
+
+            }
+        }
+
+
+        // TODO : if finished walking then erase 2 instances pushed
+        if(isWalking) {
+            DatabaseReference newRef = timeRef.push();
+            newRef.setValue(cadence);
+        }
+    }
+
+    // If cadence above a threshold for more than 3 secs then start recording as a walk
+    private void handleNotWalking(float cadence) {
+        // return if not at 3 and reset if less than threshold
+        if(cadence < cadenceThreshold) {
+            secondCount = 0;
+        } else {
+            // return without doing anything if 3 seconds have not passed
+            while(secondCount < secondThreshold) {
+                secondCount++;
+            }
+
+            if (secondCount == secondThreshold) {
+                secondCount = 0;
+                timeStamp = new SimpleDateFormat("yyyy:MM:DD:HH:mm:ss", Locale.UK).format(new Date());
+                isWalking = true;
+            }
+        }
+
+        return;
+    }
+
+    /*********** New methods end *****************/
+
 
     @Override
     public IBinder onBind(Intent arg0) {

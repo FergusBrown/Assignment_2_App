@@ -360,7 +360,7 @@ public class ActivityRecognitionService extends Service {
     private void transitionHandler(String activityType, String transitionType) {
         String info = "Transition: " + activityType +
                 " (" + transitionType + ")" + "   " +
-                new SimpleDateFormat("HH:mm:ss", Locale.UK).format(new Date());
+                new SimpleDateFormat("yyyy:MM:DD:HH:mm:ss", Locale.UK).format(new Date());
 
         Log.d(TAG, info);
         DatabaseReference newRef = mDatabaseReference.push();

@@ -48,7 +48,6 @@ public class MainActivity extends AppCompatActivity {
 
     //private DatabaseReference mDatabaseReference = mDatabase.getReference().child("Activity Data");
 
-    /***********Begin definitions for Activity API************/
 
     // Tag for log prints
     private final static String TAG = "MainActivity";
@@ -58,10 +57,12 @@ public class MainActivity extends AppCompatActivity {
     private boolean runningQOrLater = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q;
 
 
-    // Intent for the activity service
-    Intent activityService;
+    // Intents for services definitions
+    private Intent activityService;
+    private Intent gaitAnalysisService;
 
-    /***********End definitions for Activity API************/
+    // Required for cadence recording
+    public float cadence;
 
 
     @Override
@@ -72,9 +73,14 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // initialise intents for the various services
         activityService = new Intent(this, ActivityRecognitionService.class);
+        gaitAnalysisService = new Intent(this, GaitAnalysisService.class);
 
+
+        // Start services
         startService(activityService);
+        startService(gaitAnalysisService);
 
         Log.d(TAG, "App initialized.");
     }
