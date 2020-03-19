@@ -184,12 +184,14 @@ public class MainActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
+        //Open settings menu if selected
         if (id == R.id.action_settings) {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
             return true;
         }
-
         return super.onOptionsItemSelected(item);
+
     }
 
     /*************** Begin methods for checking permissions *********************/
