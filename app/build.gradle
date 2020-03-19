@@ -9,6 +9,10 @@ android {
         applicationId "com.ewireless.assignment2app"
         minSdkVersion 15
         targetSdkVersion 29
+        compileOptions {
+            sourceCompatibility JavaVersion.VERSION_1_8
+            targetCompatibility JavaVersion.VERSION_1_8
+        }
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -57,4 +61,5 @@ dependencies {
     implementation 'com.google.firebase:firebase-database:19.2.1'
 
     implementation "com.android.support:support-compat:29.0.0"
+    implementation 'com.android.support:support-v4:28.0.0'
 }

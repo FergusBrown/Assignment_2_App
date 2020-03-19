@@ -1,10 +1,13 @@
 package com.ewireless.assignment2app;
 
+import android.Manifest;
+import android.app.ActivityManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 
 import com.google.android.gms.location.ActivityRecognition;
@@ -24,6 +27,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import android.os.SystemClock;
@@ -61,34 +66,68 @@ public class MainActivity extends AppCompatActivity {
     private Intent activityService;
     private Intent gaitAnalysisService;
 
-    // Required for cadence recording
-    public float cadence;
+    // Class to handle permissions
+    private PermissionsHelper permissionsHelper;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        //status = findViewById(R.id.status);
+
+        if (!checkPermissions()){
+            // Check permissions
+            requestPermissions();
+        }
+            //status = findViewById(R.id.status);
+
         super.onCreate(savedInstanceState);
+
+        // TODO: replace this with a splash screen or intro screen
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // initialise intents for the various services
-        activityService = new Intent(this, ActivityRecognitionService.class);
-        gaitAnalysisService = new Intent(this, GaitAnalysisService.class);
-
-
-        // Start services
-        startService(activityService);
-        startService(gaitAnalysisService);
 
         Log.d(TAG, "App initialized.");
+
     }
 
+
+
+    // Initialise all background services
+    private void startServices() {
+
+        // If permissions are granted
+        if (checkPermissions()) {
+            // Start services if not already running
+            if (!isServiceRunning(ActivityRecognitionService.class)) {
+                activityService = new Intent(this, ActivityRecognitionService.class);
+                startService(activityService);
+            }
+
+            if (!isServiceRunning(GaitAnalysisService.class)) {
+                gaitAnalysisService = new Intent(this, GaitAnalysisService.class);
+                startService(gaitAnalysisService);
+            }
+        }
+
+    }
+
+    private boolean isServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     @Override
     protected void onResume() {
         super.onResume();
+
+        // Initialise services if not already running
+        startServices();
     }
 
     @Override
@@ -107,10 +146,26 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         // End all services
         stopService(activityService);
+        stopService(gaitAnalysisService);
         super.onDestroy();
     }
 
 
+    /*
+     // API 29+ only: check permissions are granted
+    private boolean activityRecognitionPermissionApproved() {
+
+        // TODO: Review permission check for 29+.
+        if (runningQOrLater) {
+
+            return PackageManager.PERMISSION_GRANTED == ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACTIVITY_RECOGNITION
+            );
+        } else {
+            return true;
+        }
+    }*/
 
 
 
@@ -136,4 +191,43 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    /*************** Begin methods for checking permissions *********************/
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        permissionsHelper.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
+    }
+
+    private boolean checkPermissions() {
+
+        int activityPerm = ContextCompat.checkSelfPermission(this, Manifest.permission.ACTIVITY_RECOGNITION);
+        int foregroundPerm = ContextCompat.checkSelfPermission(this, Manifest.permission.FOREGROUND_SERVICE);
+        int wakePerm = ContextCompat.checkSelfPermission(this, Manifest.permission.WAKE_LOCK);
+        int writePerm = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        if(activityPerm == PackageManager.PERMISSION_GRANTED
+            && foregroundPerm == PackageManager.PERMISSION_GRANTED
+                && wakePerm == PackageManager.PERMISSION_GRANTED
+                && writePerm == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    // Must call all required permissions as:
+    // "Manifest.permission.YOUR_PERMISSION
+    private void requestPermissions() {
+        permissionsHelper = new PermissionsHelper();
+        permissionsHelper.checkAndRequestPermissions(this,
+                Manifest.permission.ACTIVITY_RECOGNITION,
+                Manifest.permission.FOREGROUND_SERVICE,
+                Manifest.permission.WAKE_LOCK,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+                );
+    }
+    /*************** End methods for checking permissions *********************/
+
 }

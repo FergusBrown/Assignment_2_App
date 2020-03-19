@@ -50,8 +50,6 @@ public class ActivityRecognitionService extends Service {
 
     private DatabaseReference mDatabaseReference = mDatabase.getReference().child("Activity Data");
 
-
-
     /***********Begin definitions for Activity API************/
 
     // Tag for log prints
