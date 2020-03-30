@@ -1,1 +1,1 @@
-cd ~/AppData/Local/Android/Sdk/platform-tools; ./adb tcpip 5555; ./adb connect 192.168.1.128; cd -;
+cd ~/AppData/Local/Android/Sdk/platform-tools;./adb tcpip 5555;./adb connect 192.168.1.128;cd -;

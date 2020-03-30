@@ -21,32 +21,28 @@
 
         <EditTextPreference
             app:dialogTitle="What is the patient's name?"
-            app:defaultValue="Field Empty"
-            app:key="@string/patient_name"
-            app:title="Patient Name"
-            android:inputType="text"/>
+            app:key="Patient Name"
+            app:useSimpleSummaryProvider="true"
+            app:title="Patient Name" />
 
         <EditTextPreference
             app:dialogTitle="What is the carer's name?"
-            app:defaultValue="Field Empty"
-            app:key="@string/carer_name"
-            app:title="Carer Name"
-            android:inputType="text"/>
+            app:key="Carer Name"
+            app:useSimpleSummaryProvider="true"
+            app:title="Carer Name" />
 
         <EditTextPreference
             app:dialogTitle="What is the carer's phone number?"
-            app:defaultValue="0000"
-            app:key="@string/carer_phone"
+            app:key="Carer Phone"
+            app:useSimpleSummaryProvider="true"
             app:title="Carer Phone Number"
-            android:inputType="number"
             />
 
         <EditTextPreference
             app:dialogTitle="What is the carer's email address?"
-            app:defaultValue="Field Empty"
             app:title="Carer Email Address"
-            app:summary="@string/carer_email"
-            android:inputType="text"/>
+            app:useSimpleSummaryProvider="true"
+            app:key="Carer Email" />
 
         <!-- OLD
         <ListPreference

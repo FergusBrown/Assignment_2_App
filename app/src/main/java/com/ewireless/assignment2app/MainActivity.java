@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
     //private DatabaseReference mDatabaseReference = mDatabase.getReference().child("Activity Data");
 
 
+
     // Tag for log prints
     private final static String TAG = "MainActivity";
 
@@ -76,9 +77,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean setupComplete = prefs.getBoolean("setupComplete", false);
+        boolean setupComplete = prefs.getBoolean("Setup Complete", false);
 
         if (!setupComplete) {
             // begin setup user form
@@ -109,8 +109,8 @@ public class MainActivity extends AppCompatActivity {
     private void callSetup() {
 
         startActivity(new Intent(MainActivity.this, FirstLaunch.class));
-        Toast.makeText(MainActivity.this, "Welcome", Toast.LENGTH_LONG)
-                .show();
+        //Toast.makeText(MainActivity.this, "Welcome", Toast.LENGTH_LONG)
+                //.show();
 
     }
 
@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
     private void startServices() {
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean setupComplete = prefs.getBoolean("setupComplete", false);
+        boolean setupComplete = prefs.getBoolean("Setup Complete", false);
 
         // If permissions are granted
         if (checkPermissions() && setupComplete) {
