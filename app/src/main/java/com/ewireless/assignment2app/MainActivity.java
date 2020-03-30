@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 
@@ -30,6 +31,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.preference.PreferenceManager;
 
 import android.os.SystemClock;
 import android.text.TextUtils;
@@ -38,6 +40,7 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -73,11 +76,23 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean setupComplete = prefs.getBoolean("setupComplete", false);
+
+        if (!setupComplete) {
+            // begin setup user form
+            callSetup();
+        }
+
+        // check permissions
         if (!checkPermissions()){
             // Check permissions
             requestPermissions();
         }
-            //status = findViewById(R.id.status);
+
+
+
 
         super.onCreate(savedInstanceState);
 
@@ -91,13 +106,23 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void callSetup() {
+
+        startActivity(new Intent(MainActivity.this, FirstLaunch.class));
+        Toast.makeText(MainActivity.this, "Welcome", Toast.LENGTH_LONG)
+                .show();
+
+    }
 
 
     // Initialise all background services
     private void startServices() {
 
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean setupComplete = prefs.getBoolean("setupComplete", false);
+
         // If permissions are granted
-        if (checkPermissions()) {
+        if (checkPermissions() && setupComplete) {
             // Start services if not already running
             if (!isServiceRunning(ActivityRecognitionService.class)) {
                 activityService = new Intent(this, ActivityRecognitionService.class);

@@ -14,16 +14,39 @@
   ~ limitations under the License.
   -->
 
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory app:title="@string/settings_header">
 
         <EditTextPreference
             app:dialogTitle="What is the patient's name?"
-            app:defaultValue="John Smith"
-            app:key="name"
+            app:defaultValue="Field Empty"
+            app:key="@string/patient_name"
             app:title="Patient Name"
-            app:summary="Name of the patient" />
+            android:inputType="text"/>
+
+        <EditTextPreference
+            app:dialogTitle="What is the carer's name?"
+            app:defaultValue="Field Empty"
+            app:key="@string/carer_name"
+            app:title="Carer Name"
+            android:inputType="text"/>
+
+        <EditTextPreference
+            app:dialogTitle="What is the carer's phone number?"
+            app:defaultValue="0000"
+            app:key="@string/carer_phone"
+            app:title="Carer Phone Number"
+            android:inputType="number"
+            />
+
+        <EditTextPreference
+            app:dialogTitle="What is the carer's email address?"
+            app:defaultValue="Field Empty"
+            app:title="Carer Email Address"
+            app:summary="@string/carer_email"
+            android:inputType="text"/>
 
         <!-- OLD
         <ListPreference

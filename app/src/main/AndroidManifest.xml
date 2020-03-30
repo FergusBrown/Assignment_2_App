@@ -1,14 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.ewireless.assignment2app">
-
     <!-- Required for 28 and below. -->
-    <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
-
-    <!-- Required for 29+. -->
-    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
-    <!-- required for apps 28+ to run in the background -->
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" /> <!-- Required for 29+. -->
+    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" /> <!-- required for apps 28+ to run in the background -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
         android:allowBackup="true"
@@ -17,7 +13,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
+        <activity android:name=".FirstLaunch"></activity>
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
@@ -35,8 +31,7 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.ewireless.assignment2app.MainActivity" />
-        </activity>
-        <!-- Services that should be running in the background -->
+        </activity> <!-- Services that should be running in the background -->
         <service android:name=".ActivityRecognitionService" />
         <service android:name=".GaitAnalysisService" />
     </application>
