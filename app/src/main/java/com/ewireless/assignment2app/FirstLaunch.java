@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class FirstLaunch extends AppCompatActivity {
 
@@ -28,7 +29,6 @@ public class FirstLaunch extends AppCompatActivity {
         carerName = (EditText)findViewById(R.id.carerName);
         carerEmail = (EditText)findViewById(R.id.carerEmail);
         carerPhone = (EditText)findViewById(R.id.carerPhone);
-        // use this to get text: mEdit.getText().toString()
 
         // Open initial dialog box
         openDialog();
@@ -55,15 +55,15 @@ public class FirstLaunch extends AppCompatActivity {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = prefs.edit();
 
-        editor.putString("@string/patient_name", patientName.getText().toString() );
-        editor.putString("@string/carer_name", carerName.getText().toString() );
-        editor.putString("@string/carer_phone", carerPhone.getText().toString() );
-        editor.putString("@string/carer_email", carerEmail.getText().toString() );
+        editor.putString("Patient Name", patientName.getText().toString() );
+        editor.putString("Carer Name", carerName.getText().toString() );
+        editor.putString("Carer Phone", carerPhone.getText().toString() );
+        editor.putString("Carer Email", carerEmail.getText().toString() );
 
-        editor.putBoolean("setupComplete", true);
+        editor.putBoolean("Setup Complete", true);
 
         // flush the buffer
-        editor.commit();
+        editor.apply();
 
         // Activity Finished
         finish();

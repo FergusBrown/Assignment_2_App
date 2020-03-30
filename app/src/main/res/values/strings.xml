@@ -8,7 +8,12 @@
     <string name="carer_name">Carer Name</string>
     <string name="carer_phone">Carer Phone</string>
     <string name="carer_email">Carer Email</string>
+    <string name="setup_complete">Setup Complete</string>
     <string name="ok">OK</string>
-    <string name="welcome_text">Welcome! Please complete this form with the carer and patient\'s details.</string>
+    <string name="welcome_text">Please complete this form with the carer and patient\'s details. You only need to do this once as a first time setup.</string>
     <string name="welcome_dialog_title">Welcome!</string>
+    <string name="patient_name_storage" />
+    <string name="carer_name_storage" />
+    <string name="carer_phone_storage" />
+    <string name="carer_email_storage" />
 </resources>

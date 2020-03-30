@@ -8,12 +8,16 @@
         android:id="@+id/patientName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:inputType=
+            "textCapSentences|textAutoCorrect"
         android:hint="Patient Name" />
 
     <EditText
         android:id="@+id/carerName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:inputType=
+            "textCapSentences|textAutoCorrect"
         android:hint="Carer Name" />
 
     <EditText
