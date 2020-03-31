@@ -6,24 +6,24 @@
 6
 7    <uses-sdk
 8        android:minSdkVersion="15"
-8-->C:\Users\Fergus\StudioProjects\Assignment_2_App\gaitLib\src\main\AndroidManifest.xml
+8-->C:\Users\Roland\AndroidStudioProjects\Assignment_2_App\gaitLib\src\main\AndroidManifest.xml
 9        android:targetSdkVersion="29" />
-9-->C:\Users\Fergus\StudioProjects\Assignment_2_App\gaitLib\src\main\AndroidManifest.xml
+9-->C:\Users\Roland\AndroidStudioProjects\Assignment_2_App\gaitLib\src\main\AndroidManifest.xml
 10
 11    <!-- Permissions required by gaitlib -->
 12    <uses-permission android:name="android.permission.WAKE_LOCK" />
-12-->C:\Users\Fergus\StudioProjects\Assignment_2_App\gaitLib\src\main\AndroidManifest.xml:8:5-67
-12-->C:\Users\Fergus\StudioProjects\Assignment_2_App\gaitLib\src\main\AndroidManifest.xml:8:22-65
+12-->C:\Users\Roland\AndroidStudioProjects\Assignment_2_App\gaitLib\src\main\AndroidManifest.xml:8:5-67
+12-->C:\Users\Roland\AndroidStudioProjects\Assignment_2_App\gaitLib\src\main\AndroidManifest.xml:8:22-65
 13    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-13-->C:\Users\Fergus\StudioProjects\Assignment_2_App\gaitLib\src\main\AndroidManifest.xml:9:5-80
-13-->C:\Users\Fergus\StudioProjects\Assignment_2_App\gaitLib\src\main\AndroidManifest.xml:9:22-78
+13-->C:\Users\Roland\AndroidStudioProjects\Assignment_2_App\gaitLib\src\main\AndroidManifest.xml:9:5-80
+13-->C:\Users\Roland\AndroidStudioProjects\Assignment_2_App\gaitLib\src\main\AndroidManifest.xml:9:22-78
 14
 15    <application
-15-->C:\Users\Fergus\StudioProjects\Assignment_2_App\gaitLib\src\main\AndroidManifest.xml:11:5-14:19
+15-->C:\Users\Roland\AndroidStudioProjects\Assignment_2_App\gaitLib\src\main\AndroidManifest.xml:11:5-14:19
 16        android:label="@string/app_name"
-16-->C:\Users\Fergus\StudioProjects\Assignment_2_App\gaitLib\src\main\AndroidManifest.xml:12:9-41
+16-->C:\Users\Roland\AndroidStudioProjects\Assignment_2_App\gaitLib\src\main\AndroidManifest.xml:12:9-41
 17        android:requestLegacyExternalStorage="true" >
-17-->C:\Users\Fergus\StudioProjects\Assignment_2_App\gaitLib\src\main\AndroidManifest.xml:13:9-52
+17-->C:\Users\Roland\AndroidStudioProjects\Assignment_2_App\gaitLib\src\main\AndroidManifest.xml:13:9-52
 18    </application>
 19
 20</manifest>
