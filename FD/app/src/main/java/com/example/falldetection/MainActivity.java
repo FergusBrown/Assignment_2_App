@@ -1,10 +1,13 @@
 package com.example.falldetection;
 
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.net.Uri;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -14,6 +17,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.os.CountDownTimer;
+import android.telephony.SmsManager;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -109,23 +114,52 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             Toast.makeText(this, "Fall registered", Toast.LENGTH_SHORT).show();
             f = 0;
             onPause();
-            timer();
+            timer.start();
         }
     }
 
-    private void timer(){
-        new CountDownTimer(30000, 1000) {
+    CountDownTimer timer = new CountDownTimer(30000, 1000) {
 
-            public void onTick(long millisUntilFinished) {
-                tvTimer.setText("seconds remaining: " + millisUntilFinished / 1000);
-            }
-
-            public void onFinish() {
-                tvTimer.setText("Sending email");
-            }
+        public void onTick(long millisUntilFinished) {
+            tvTimer.setText("seconds remaining: " + millisUntilFinished / 1000);
         }
-                .start();
+
+        public void onFinish() {
+            tvTimer.setText("Sending text message");
+            sendMessage();
+        }
+    };
+
+    //.start();
+
+
+    public void onButton(View view){
+        timer.cancel();
+        onResume();
     }
+
+    /*public void sendMessage(){
+        Intent smsIntent = new Intent(Intent.ACTION_SENDTO,
+                Uri.parse("sms:+447719467263"));
+        smsIntent.putExtra("sms_body", "Hello");
+        startActivity(smsIntent);
+    }*/
+
+    public void sendMessage(){
+        String messageToSend = "Fall has been detected";
+        String number = "xxxx";
+
+        //SmsManager.getDefault().sendTextMessage(number, null, messageToSend, null,null);
+
+        SmsManager sms = SmsManager.getDefault();
+        PendingIntent sentPI;
+        String SENT = "SMS_SENT";
+
+        sentPI = PendingIntent.getBroadcast(this, 0,new Intent(SENT), 0);
+
+        sms.sendTextMessage(number, null, messageToSend, sentPI, null);
+    }
+
 
     @Override
     protected void onResume(){
