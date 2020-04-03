@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">FallDetection</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_CDTimer">Countdown timer</string>
+    <string name="title_activity_cdtimer">CDTimer</string>string>
+    <string name="fall_detection">Stop timer</string>string>
+</resources>
