@@ -1,6 +1,0 @@
-<resources>
-    <string name="app_name">FallDetection</string>
-    <string name="action_settings">Settings</string>
-    <string name="button_send">Stop timer</string>
-
-</resources>
