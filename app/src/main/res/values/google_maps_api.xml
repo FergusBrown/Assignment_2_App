@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--
+
+    To get one, follow this link, follow the directions and press "Create" at the end:
+
+    https://console.developers.google.com/flows/enableapi?apiid=maps_android_backend&keyType=CLIENT_SIDE_ANDROID&r=8E:E9:69:2B:4E:76:4D:A1:A4:A2:20:92:33:DD:6F:2E:32:4D:EE:EB%3Bcom.ewireless.assignment2app
+
+    You can also add your credentials to an existing key, using these values:
+
+    Package name:
+    com.ewireless.assignment2app
+
+    SHA-1 certificate fingerprint:
+    8E:E9:69:2B:4E:76:4D:A1:A4:A2:20:92:33:DD:6F:2E:32:4D:EE:EB
+
+    Alternatively, follow the directions here:
+    https://developers.google.com/maps/documentation/android/start#get-key
+
+    Once you have your key (it starts with "AIza"), replace the "google_maps_key"
+    string in this file.
+    -->
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyA2IoFFjcimKIU_JUNaEaoBzVj2ipE5iPA</string>
+</resources>

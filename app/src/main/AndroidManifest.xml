@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.ewireless.assignment2app">
-    <!-- Required for 28 and below. -->
+
+    <!-- Required for Activity Recognition. -->
     <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" /> <!-- Required for 29+. -->
     <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" /> <!-- required for apps 28+ to run in the background -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
+    <!-- Required for Geofencing -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -32,8 +38,28 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.ewireless.assignment2app.MainActivity" />
         </activity> <!-- Services that should be running in the background -->
+
+        <!-- Activity recognition services -->
         <service android:name=".ActivityRecognitionService" />
         <service android:name=".GaitAnalysisService" />
+
+        <!-- Services and meta data required for geofencing -->
+
+        <service
+            android:name=".GeofenceRegistrationService"
+            android:enabled="true"
+            android:exported="true"></service>
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <!--
+             The API key for Google Maps-based APIs.
+        -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
     </application>
 
 </manifest>
