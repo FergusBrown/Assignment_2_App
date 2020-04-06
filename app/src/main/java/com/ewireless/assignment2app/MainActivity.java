@@ -175,25 +175,6 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-
-    /*
-     // API 29+ only: check permissions are granted
-    private boolean activityRecognitionPermissionApproved() {
-
-        // TODO: Review permission check for 29+.
-        if (runningQOrLater) {
-
-            return PackageManager.PERMISSION_GRANTED == ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.ACTIVITY_RECOGNITION
-            );
-        } else {
-            return true;
-        }
-    }*/
-
-
-
     // Default methods automatically added
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -233,11 +214,19 @@ public class MainActivity extends AppCompatActivity {
         int foregroundPerm = ContextCompat.checkSelfPermission(this, Manifest.permission.FOREGROUND_SERVICE);
         int wakePerm = ContextCompat.checkSelfPermission(this, Manifest.permission.WAKE_LOCK);
         int writePerm = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        int fineLocationPerm = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
+        int coarseLocationPerm = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION);
+
+        //TODO: this perm is only for API 29+, may need to be handled differently for lower level APIs
+        int backgroundLocationPerm = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION);
 
         if(activityPerm == PackageManager.PERMISSION_GRANTED
             && foregroundPerm == PackageManager.PERMISSION_GRANTED
                 && wakePerm == PackageManager.PERMISSION_GRANTED
-                && writePerm == PackageManager.PERMISSION_GRANTED) {
+                && writePerm == PackageManager.PERMISSION_GRANTED
+                && fineLocationPerm == PackageManager.PERMISSION_GRANTED
+                && coarseLocationPerm == PackageManager.PERMISSION_GRANTED
+                && backgroundLocationPerm == PackageManager.PERMISSION_GRANTED) {
             return true;
         } else {
             return false;
@@ -252,7 +241,10 @@ public class MainActivity extends AppCompatActivity {
                 Manifest.permission.ACTIVITY_RECOGNITION,
                 Manifest.permission.FOREGROUND_SERVICE,
                 Manifest.permission.WAKE_LOCK,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_BACKGROUND_LOCATION
                 );
     }
     /*************** End methods for checking permissions *********************/
