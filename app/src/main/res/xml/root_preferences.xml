@@ -44,6 +44,14 @@
             app:useSimpleSummaryProvider="true"
             app:key="Carer Email" />
 
+        <SeekBarPreference
+            app:dialogTitle="How big should the geofence radius be (metres)?"
+            app:title="Patient Home Radius (metres)"
+            app:showSeekBarValue="true"
+            app:useSimpleSummaryProvider="true"
+            app:key="Geofence Radius"
+            />
+
         <!-- OLD
         <ListPreference
             app:dialogTitle="Select alignment"

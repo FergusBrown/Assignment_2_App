@@ -324,11 +324,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @NonNull
     private Geofence getGeofence() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        int geofenceRadius = prefs.getInt("Geofence Radius", 50);
+
         LatLng latLng = Constants.AREA_LANDMARKS.get(Constants.GEOFENCE_ID);
         return new Geofence.Builder()
                 .setRequestId(Constants.GEOFENCE_ID)
                 .setExpirationDuration(Geofence.NEVER_EXPIRE)
-                .setCircularRegion(latLng.latitude, latLng.longitude, Constants.GEOFENCE_RADIUS_IN_METERS)
+                .setCircularRegion(latLng.latitude, latLng.longitude, geofenceRadius)
                 .setNotificationResponsiveness(1000)
                 .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT)
                 .build();
@@ -383,9 +386,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         googleMap.setMyLocationEnabled(true);
 
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        int geofenceRadius = prefs.getInt("Geofence Radius", 50);
+
         Circle circle = googleMap.addCircle(new CircleOptions()
                 .center(new LatLng(latLng.latitude, latLng.longitude))
-                .radius(Constants.GEOFENCE_RADIUS_IN_METERS)
+                .radius(geofenceRadius)
                 .strokeColor(Color.RED)
                 .strokeWidth(4f));
 

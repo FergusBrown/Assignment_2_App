@@ -10,6 +10,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class FirstLaunch extends AppCompatActivity {
@@ -20,6 +22,9 @@ public class FirstLaunch extends AppCompatActivity {
     EditText carerPhone;
     EditText carerEmail;
 
+    TextView radiusLabel;
+    private int radius;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,6 +34,15 @@ public class FirstLaunch extends AppCompatActivity {
         carerName = (EditText)findViewById(R.id.carerName);
         carerEmail = (EditText)findViewById(R.id.carerEmail);
         carerPhone = (EditText)findViewById(R.id.carerPhone);
+
+        //Slider
+        // set a change listener on the SeekBar
+        SeekBar seekBar = findViewById(R.id.radiusSlider);
+        seekBar.setOnSeekBarChangeListener(seekBarChangeListener);
+
+        radius = seekBar.getProgress();
+        radiusLabel = findViewById(R.id.radiusText);
+        radiusLabel.setText("Patient home radius: " + radius);
 
         // Open initial dialog box
         openDialog();
@@ -59,6 +73,7 @@ public class FirstLaunch extends AppCompatActivity {
         editor.putString("Carer Name", carerName.getText().toString() );
         editor.putString("Carer Phone", carerPhone.getText().toString() );
         editor.putString("Carer Email", carerEmail.getText().toString() );
+        editor.putInt("Geofence Radius", radius);
 
         editor.putBoolean("Setup Complete", true);
 
@@ -74,4 +89,28 @@ public class FirstLaunch extends AppCompatActivity {
         dialog.setContentView(R.layout.welcome_dialog);
         dialog.dismiss();
     }
+
+    // Seekbar listener
+    SeekBar.OnSeekBarChangeListener seekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
+
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int value, boolean fromUser) {
+            // updated continuously as the user slides the thumb
+
+            radius = value;
+            radiusLabel.setText("Patient home radius: " + radius);
+        }
+
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+            // called when the user first touches the SeekBar
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+            // called after the user finishes moving the SeekBar
+        }
+    };
+
 }

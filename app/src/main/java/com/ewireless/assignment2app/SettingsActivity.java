@@ -42,8 +42,7 @@ public class SettingsActivity extends AppCompatActivity {
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
 
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
-            EditTextPreference patientName = findPreference("@string/patient_name");
-            EditTextPreference carerPhone = findPreference("phone");
+            EditTextPreference carerPhone = findPreference("Carer Phone");
 
             if (carerPhone != null) {
                 carerPhone.setOnBindEditTextListener(
