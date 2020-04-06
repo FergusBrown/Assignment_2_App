@@ -94,7 +94,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         // bind map fragment
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
-        //MapFragment mapFragment = (MapFragment) getFragmentManager() .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
         // initialise google API client
@@ -328,10 +327,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         int geofenceRadius = prefs.getInt("Geofence Radius", 50);
 
         LatLng latLng = Constants.AREA_LANDMARKS.get(Constants.GEOFENCE_ID);
+        double latitude;
+        double longitude;
+
+        latitude = Double.longBitsToDouble(prefs.getLong("Latitude", Double.doubleToLongBits(latLng.latitude)));
+        longitude = Double.longBitsToDouble(prefs.getLong("Longitude", Double.doubleToLongBits(latLng.latitude)));
+
+
         return new Geofence.Builder()
                 .setRequestId(Constants.GEOFENCE_ID)
                 .setExpirationDuration(Geofence.NEVER_EXPIRE)
-                .setCircularRegion(latLng.latitude, latLng.longitude, geofenceRadius)
+                .setCircularRegion(latitude, longitude, geofenceRadius)
                 .setNotificationResponsiveness(1000)
                 .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER | Geofence.GEOFENCE_TRANSITION_EXIT)
                 .build();
@@ -381,17 +387,28 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         this.googleMap = googleMap;
         LatLng latLng = Constants.AREA_LANDMARKS.get(Constants.GEOFENCE_ID);
-        googleMap.addMarker(new MarkerOptions().position(latLng).title("Edinburgh"));
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        int geofenceRadius = prefs.getInt("Geofence Radius", 50);
+        double latitude;
+        double longitude;
+
+        latitude = Double.longBitsToDouble(prefs.getLong("Latitude", Double.doubleToLongBits(latLng.latitude)));
+        longitude = Double.longBitsToDouble(prefs.getLong("Longitude", Double.doubleToLongBits(latLng.latitude)));
+
+
+        googleMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).title("Home"));
         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 17f));
 
         googleMap.setMyLocationEnabled(true);
 
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        int geofenceRadius = prefs.getInt("Geofence Radius", 50);
+
+
+
 
         Circle circle = googleMap.addCircle(new CircleOptions()
-                .center(new LatLng(latLng.latitude, latLng.longitude))
+                .center(new LatLng(latitude, longitude))
                 .radius(geofenceRadius)
                 .strokeColor(Color.RED)
                 .strokeWidth(4f));
