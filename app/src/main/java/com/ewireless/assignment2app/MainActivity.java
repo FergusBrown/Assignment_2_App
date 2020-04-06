@@ -48,14 +48,6 @@ import androidx.preference.PreferenceManager;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
 
-
-    // Database reference initialisation
-    //FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
-
-    //private DatabaseReference mDatabaseReference = mDatabase.getReference().child("Activity Data");
-
-
-
     // Tag for log prints
     private final static String TAG = "MainActivity";
 
@@ -75,8 +67,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private GoogleMap googleMap;
     private GeofencingRequest geofencingRequest;
     private GoogleApiClient googleApiClient;
-    private boolean isMonitoring = true;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -201,6 +191,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         // End all services
         stopService(activityService);
         stopService(gaitAnalysisService);
+        googleApiClient.reconnect();
         super.onDestroy();
     }
 
@@ -283,8 +274,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         Log.d(TAG, "Google Api Client Connected");
-        isMonitoring = true;
-        //startGeofencing();
+        startGeofencing();
         startLocationMonitor();
     }
 
@@ -295,7 +285,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        isMonitoring = false;
         Log.e(TAG, "Connection Failed:" + connectionResult.getErrorMessage());
     }
 
@@ -328,7 +317,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Log.d(TAG, e.getMessage());
             }
         }
-        isMonitoring = true;
         invalidateOptionsMenu();
     }
 
@@ -368,7 +356,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                             Log.d(TAG, "Not stop geofencing");
                     }
                 });
-        isMonitoring = false;
         invalidateOptionsMenu();
     }
 
@@ -402,6 +389,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .strokeColor(Color.RED)
                 .strokeWidth(4f));
 
+
+
     }
 
     // Monitors location, also sets markers on the map. **NOT REQUIRED FOR GEOFENCING**
@@ -411,24 +400,28 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .setInterval(2000)
                 .setFastestInterval(1000)
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        try {
-            LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, new LocationListener() {
-                @Override
-                public void onLocationChanged(Location location) {
 
-                    if (currentLocationMarker != null) {
-                        currentLocationMarker.remove();
+        if (googleMap != null) {
+            try {
+                LocationServices.FusedLocationApi.requestLocationUpdates(googleApiClient, locationRequest, new LocationListener() {
+                    @Override
+                    public void onLocationChanged(Location location) {
+
+                        if (currentLocationMarker != null) {
+                            currentLocationMarker.remove();
+                        }
+                        markerOptions = new MarkerOptions();
+                        markerOptions.position(new LatLng(location.getLatitude(), location.getLongitude()));
+                        markerOptions.title("Current Location");
+                        currentLocationMarker = googleMap.addMarker(markerOptions);
+                        Log.d(TAG, "Location Change Lat Lng " + location.getLatitude() + " " + location.getLongitude());
                     }
-                    markerOptions = new MarkerOptions();
-                    markerOptions.position(new LatLng(location.getLatitude(), location.getLongitude()));
-                    markerOptions.title("Current Location");
-                    currentLocationMarker = googleMap.addMarker(markerOptions);
-                    Log.d(TAG, "Location Change Lat Lng " + location.getLatitude() + " " + location.getLongitude());
-                }
-            });
-        } catch (SecurityException e) {
-            Log.d(TAG, e.getMessage());
+                });
+            } catch (SecurityException e) {
+                Log.d(TAG, e.getMessage());
+            }
         }
+
 
     }
     /*************** End methods for geofencing *********************/
