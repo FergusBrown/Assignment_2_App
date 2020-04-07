@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     // Intents for services definitions
     private Intent activityService;
     private Intent gaitAnalysisService;
+    private Intent fallDetectionService;
 
     // Class to handle permissions
     private PermissionsHelper permissionsHelper;
@@ -133,6 +134,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 gaitAnalysisService = new Intent(this, GaitAnalysisService.class);
                 startService(gaitAnalysisService);
             }
+
+            if (!isServiceRunning(FallDetectionService.class)) {
+                fallDetectionService = new Intent(this, FallDetectionService.class);
+                startService(fallDetectionService);
+            }
         }
 
     }
@@ -190,6 +196,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         // End all services
         stopService(activityService);
         stopService(gaitAnalysisService);
+        stopService(fallDetectionService);
         googleApiClient.reconnect();
         super.onDestroy();
     }
@@ -234,6 +241,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         int writePerm = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
         int fineLocationPerm = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
         int coarseLocationPerm = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION);
+        int smsPerm = ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS);
 
         //TODO: this perm is only for API 29+, may need to be handled differently for lower level APIs
         int backgroundLocationPerm = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION);
@@ -244,7 +252,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 && writePerm == PackageManager.PERMISSION_GRANTED
                 && fineLocationPerm == PackageManager.PERMISSION_GRANTED
                 && coarseLocationPerm == PackageManager.PERMISSION_GRANTED
-                && backgroundLocationPerm == PackageManager.PERMISSION_GRANTED) {
+                && backgroundLocationPerm == PackageManager.PERMISSION_GRANTED
+                && smsPerm == PackageManager.PERMISSION_GRANTED) {
             return true;
         } else {
             return false;
@@ -262,7 +271,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.ACCESS_BACKGROUND_LOCATION
+                Manifest.permission.ACCESS_BACKGROUND_LOCATION,
+                Manifest.permission.SEND_SMS
                 );
     }
 
