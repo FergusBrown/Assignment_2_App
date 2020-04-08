@@ -65,4 +65,15 @@ dependencies {
 
     // required for preferences
     implementation 'androidx.preference:preference:1.1.0-alpha05'
+    implementation 'com.google.android.gms:play-services-maps:17.0.0'
+
+    // Required for geofencing
+    //noinspection GradleCompatible
+    implementation 'com.android.support:appcompat-v7:26.1.0'
+    testImplementation 'junit:junit:4.12'
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile 'com.android.support:multidex:1.0.0'
+    testCompile 'junit:junit:4.12'
+    compile 'com.google.android.gms:play-services-location:10.2.1'
+    compile 'com.google.android.gms:play-services-maps:10.2.1'
 }

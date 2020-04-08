@@ -14,16 +14,43 @@
   ~ limitations under the License.
   -->
 
-<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
     <PreferenceCategory app:title="@string/settings_header">
 
         <EditTextPreference
             app:dialogTitle="What is the patient's name?"
-            app:defaultValue="John Smith"
-            app:key="name"
-            app:title="Patient Name"
-            app:summary="Name of the patient" />
+            app:key="Patient Name"
+            app:useSimpleSummaryProvider="true"
+            app:title="Patient Name" />
+
+        <EditTextPreference
+            app:dialogTitle="What is the carer's name?"
+            app:key="Carer Name"
+            app:useSimpleSummaryProvider="true"
+            app:title="Carer Name" />
+
+        <EditTextPreference
+            app:dialogTitle="What is the carer's phone number?"
+            app:key="Carer Phone"
+            app:useSimpleSummaryProvider="true"
+            app:title="Carer Phone Number"
+            />
+
+        <EditTextPreference
+            app:dialogTitle="What is the carer's email address?"
+            app:title="Carer Email Address"
+            app:useSimpleSummaryProvider="true"
+            app:key="Carer Email" />
+
+        <SeekBarPreference
+            app:dialogTitle="How big should the geofence radius be (metres)?"
+            app:title="Patient Home Radius (metres)"
+            app:showSeekBarValue="true"
+            app:useSimpleSummaryProvider="true"
+            app:key="Geofence Radius"
+            />
 
         <!-- OLD
         <ListPreference

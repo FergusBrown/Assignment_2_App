@@ -2,22 +2,40 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.ewireless.assignment2app">
 
-    <!-- Required for 28 and below. -->
+    <!-- Required for Activity Recognition. -->
     <uses-permission android:name="com.google.android.gms.permission.ACTIVITY_RECOGNITION" />
-
     <!-- Required for 29+. -->
     <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
     <!-- required for apps 28+ to run in the background -->
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+
+    <!-- Required for Geofencing -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- required for API 29+ in order for geofence to run in the background -->
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+
+    <!-- Required for fall detection -->
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.WRITE_SMS" />
+    <uses-permission android:name="android.permission.READ_SMS" />
 
     <application
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <service
+            android:name=".FallDetectionService"
+            android:enabled="true"
+            android:exported="true"></service>
 
+        <activity android:name=".FirstLaunch" />
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
@@ -35,10 +53,28 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.ewireless.assignment2app.MainActivity" />
-        </activity>
-        <!-- Services that should be running in the background -->
+        </activity> <!-- Services that should be running in the background -->
+        <activity
+            android:name="com.ewireless.assignment2app.StartMapActivity"
+            android:label="@string/title_activity_strat_map"></activity>
+
+
+        <!-- Activity recognition services -->
         <service android:name=".ActivityRecognitionService" />
         <service android:name=".GaitAnalysisService" />
+        <!-- Services and meta data required for geofencing -->
+        <service
+            android:name=".GeofenceRegistrationService"
+            android:enabled="true"
+            android:exported="true" />
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        <!--              The API key for Google Maps-based APIs. -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/google_maps_key" />
     </application>
 
 </manifest>

@@ -4,4 +4,17 @@
     <string name="permission_required">Permission required.</string>
     <string name="settings_header">Settings</string>
     <string name="title_activity_settings">Settings</string>
+    <string name="patient_name">Patient Name</string>
+    <string name="carer_name">Carer Name</string>
+    <string name="carer_phone">Carer Phone</string>
+    <string name="carer_email">Carer Email</string>
+    <string name="setup_complete">Setup Complete</string>
+    <string name="ok">OK</string>
+    <string name="welcome_text">Please complete this form with the carer and patient\'s details. You only need to do this once as a first time setup.</string>
+    <string name="welcome_dialog_title">Welcome!</string>
+    <string name="patient_name_storage" />
+    <string name="carer_name_storage" />
+    <string name="carer_phone_storage" />
+    <string name="carer_email_storage" />
+    <string name="title_activity_strat_map">Start Map</string>
 </resources>
