@@ -82,16 +82,20 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         boolean setupComplete = prefs.getBoolean("Setup Complete", false);
 
-        if (!setupComplete) {
-            // begin setup user form
-            callSetup();
-        }
-
         // check permissions
         if (!checkPermissions()){
             // Check permissions
             requestPermissions();
         }
+
+        if (!setupComplete) {
+            // begin setup user form
+            callSetup();
+        }
+
+
+
+
 
         // TODO: replace this with a splash screen or intro screen
         setContentView(R.layout.activity_main);
@@ -103,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        // initialise google API client
+        // initialise google API client if setup complete
         googleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(LocationServices.API)
                 .addConnectionCallbacks(this)
@@ -181,7 +185,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onStart();
 
         // reconnect to google API client
-        googleApiClient.reconnect();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean setupComplete = prefs.getBoolean("Setup Complete", false);
+
+        if (setupComplete) {
+            googleApiClient.reconnect();
+        }
+
     }
 
     @Override
