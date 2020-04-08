@@ -15,6 +15,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 
 
 import com.google.android.gms.common.ConnectionResult;
@@ -50,6 +53,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     // Tag for log prints
     private final static String TAG = "MainActivity";
+
+    // Extra message for find home activity
+    public final static String EXTRA_MESSAGE ="com.ewireless.assignment2app";
 
     // Boolean for whether device is running API level 29 or later
     // TODO: implement permission check
@@ -102,7 +108,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .addApi(LocationServices.API)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this).build();
-
 
         Log.d(TAG, "App initialized.");
     }
@@ -412,11 +417,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         googleMap.setMyLocationEnabled(true);
 
-
-
-
-
-
         Circle circle = googleMap.addCircle(new CircleOptions()
                 .center(new LatLng(latitude, longitude))
                 .radius(geofenceRadius)
@@ -459,4 +459,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
     /*************** End methods for geofencing *********************/
+
+    /*************** Begin methods for find home ********************/
+
+    public void goToMap(View view) {
+        Intent intent = new Intent(MainActivity.this, StartMapActivity.class);
+        intent.putExtra(EXTRA_MESSAGE, "ML12 6QB");
+        startActivity(intent);
+        // TODO: this should stop all services on open
+    }
+
+    /*************** End methods for find home **********************/
+
 }

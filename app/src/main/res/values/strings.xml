@@ -16,4 +16,5 @@
     <string name="carer_name_storage" />
     <string name="carer_phone_storage" />
     <string name="carer_email_storage" />
+    <string name="title_activity_strat_map">Start Map</string>
 </resources>

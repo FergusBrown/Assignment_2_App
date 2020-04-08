@@ -54,6 +54,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.ewireless.assignment2app.MainActivity" />
         </activity> <!-- Services that should be running in the background -->
+        <activity
+            android:name="com.ewireless.assignment2app.StartMapActivity"
+            android:label="@string/title_activity_strat_map"></activity>
+
+
         <!-- Activity recognition services -->
         <service android:name=".ActivityRecognitionService" />
         <service android:name=".GaitAnalysisService" />
