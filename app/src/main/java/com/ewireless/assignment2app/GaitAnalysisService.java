@@ -16,6 +16,8 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
 
 import com.google.firebase.database.DataSnapshot;
@@ -31,7 +33,13 @@ import org.spin.gaitlib.filter.FilterNotSetException;
 import org.spin.gaitlib.gait.IClassifierModelLoadingListener;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.Locale;
 
 import static weka.core.mathematicalexpression.sym.error;
@@ -220,11 +228,13 @@ public class GaitAnalysisService extends Service {
         }
     }
 
-
     private String year;
     private  String month;
     private  String day;
     private String timeStamp;
+
+    // list for storing data, key for seconds, float for cadence value
+    private List<Float> cadenceData = new ArrayList<Float>();
 
     private void handleWalking(float cadence) {
 
@@ -235,33 +245,38 @@ public class GaitAnalysisService extends Service {
                 .child("YEAR:" + year)
                 .child("MONTH: " + month)
                 .child("DAY: " + day)
-                .child("TIME: " + timeStamp);;
+                .child("TIME: " + timeStamp);
 
-        // return if not at 3 and reset if less than threshold
+        // Add data to list
+        cadenceData.add(cadence);
+
+        // return if not at X and reset if less than threshold
         if(cadence >= cadenceThreshold) {
             secondCount = 0;
         } else {
-            // return without doing anything if 3 seconds have not passed
+            // return without doing anything if X seconds have not passed
             while(secondCount < secondThreshold) {
                 secondCount++;
             }
 
+
             if (secondCount == secondThreshold) {
                 secondCount = 0;
                 isWalking = false;
+                // erase last X instances
                 for (int i = 0; i < secondThreshold; i++) {
-                    String key = timeRef.getKey();
-                    timeRef.child(key).removeValue();
+                    int lastIndex = cadenceData.size()-1;
+                    cadenceData.remove(lastIndex);
                 }
 
+                // set timestamp calue to the list of cadence values
+                timeRef.setValue(cadenceData);
+
+                // clear list
+                cadenceData.clear();
+
+
             }
-        }
-
-
-        // TODO : if finished walking then erase 2 instances pushed
-        if(isWalking) {
-            DatabaseReference newRef = timeRef.push();
-            newRef.setValue(cadence);
         }
     }
 
