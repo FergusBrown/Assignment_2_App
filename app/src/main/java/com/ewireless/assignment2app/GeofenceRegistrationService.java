@@ -53,8 +53,6 @@ public class GeofenceRegistrationService extends IntentService {
                 Log.d(TAG, "You are outside home");
                 sendMessage(geofenceTransitionDetails);
             }
-
-            // TODO: only send message on exit - send lat and longitude?
             sendNotification( geofenceTransitionDetails );
         }
     }
