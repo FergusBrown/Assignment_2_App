@@ -82,20 +82,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         boolean setupComplete = prefs.getBoolean("Setup Complete", false);
 
-        // check permissions
-        if (!checkPermissions()){
-            // Check permissions
-            requestPermissions();
-        }
-
         if (!setupComplete) {
             // begin setup user form
             callSetup();
         }
 
-
-
-
+        // check permissions
+        if (!checkPermissions()){
+            // Check permissions
+            requestPermissions();
+        }
 
         // TODO: replace this with a splash screen or intro screen
         setContentView(R.layout.activity_main);

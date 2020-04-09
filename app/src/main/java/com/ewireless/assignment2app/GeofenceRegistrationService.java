@@ -37,6 +37,7 @@ public class GeofenceRegistrationService extends IntentService {
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
+
         Log.d(TAG, "onHandleIntent");
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
         if (geofencingEvent.hasError()) {
@@ -45,14 +46,15 @@ public class GeofenceRegistrationService extends IntentService {
             int transaction = geofencingEvent.getGeofenceTransition();
             List<Geofence> geofences = geofencingEvent.getTriggeringGeofences();
             Geofence geofence = geofences.get(0);
+            String geofenceTransitionDetails = getGeofenceTrasitionDetails(transaction, geofences );
             if (transaction == Geofence.GEOFENCE_TRANSITION_ENTER && geofence.getRequestId().equals(Constants.GEOFENCE_ID)) {
                 Log.d(TAG, "You are inside home area");
             } else {
                 Log.d(TAG, "You are outside home");
+                sendMessage(geofenceTransitionDetails);
             }
-            String geofenceTransitionDetails = getGeofenceTrasitionDetails(transaction, geofences );
 
-            sendMessage(geofenceTransitionDetails);
+            // TODO: only send message on exit - send lat and longitude?
             sendNotification( geofenceTransitionDetails );
         }
     }

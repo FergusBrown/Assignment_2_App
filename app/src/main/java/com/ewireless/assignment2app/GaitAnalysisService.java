@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.IBinder;
@@ -14,6 +15,8 @@ import android.os.PowerManager.WakeLock;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.TextView;
+
+import androidx.preference.PreferenceManager;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -38,8 +41,8 @@ public class GaitAnalysisService extends Service {
     // Database reference initialisation
     FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
 
-    public static final String masterRef = "Cadence Data";
-    private DatabaseReference cadenceReference = mDatabase.getReference().child(masterRef);
+    //public static final String masterRef = "Cadence Data";
+    private DatabaseReference mDatabaseReference = mDatabase.getReference().child("Users");
 
 
     // Tag for log prints
@@ -218,11 +221,21 @@ public class GaitAnalysisService extends Service {
     }
 
 
+    private String year;
+    private  String month;
+    private  String day;
     private String timeStamp;
 
     private void handleWalking(float cadence) {
 
-        DatabaseReference timeRef = mDatabase.getReference(masterRef).child(timeStamp);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String userKey = prefs.getString("User ID", null);
+
+        DatabaseReference timeRef = mDatabaseReference.child(userKey).child("Cadence Data")
+                .child("YEAR:" + year)
+                .child("MONTH: " + month)
+                .child("DAY: " + day)
+                .child("TIME: " + timeStamp);;
 
         // return if not at 3 and reset if less than threshold
         if(cadence >= cadenceThreshold) {
@@ -265,7 +278,10 @@ public class GaitAnalysisService extends Service {
 
             if (secondCount == secondThreshold) {
                 secondCount = 0;
-                timeStamp = new SimpleDateFormat("yyyy:MM:DD:HH:mm:ss", Locale.UK).format(new Date());
+                year = new SimpleDateFormat("yyyy", Locale.UK).format(new Date());
+                month = new SimpleDateFormat("MM", Locale.UK).format(new Date());
+                day = new SimpleDateFormat("dd", Locale.UK).format(new Date());
+                timeStamp = new SimpleDateFormat("HH:mm:ss", Locale.UK).format(new Date());
                 isWalking = true;
             }
         }

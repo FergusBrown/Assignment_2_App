@@ -8,6 +8,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -22,6 +23,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.NotificationCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.preference.PreferenceManager;
 
 import com.ewireless.assignment2app.BuildConfig;
 import com.ewireless.assignment2app.MainActivity;
@@ -48,7 +50,7 @@ public class ActivityRecognitionService extends Service {
     // Database reference initialisation
     FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
 
-    private DatabaseReference mDatabaseReference = mDatabase.getReference().child("Activity Data");
+    private DatabaseReference mDatabaseReference = mDatabase.getReference().child("Users");
 
     /***********Begin definitions for Activity API************/
 
@@ -359,10 +361,21 @@ public class ActivityRecognitionService extends Service {
         String info = "Transition: " + activityType +
                 " (" + transitionType + ")" + "   " +
                 new SimpleDateFormat("yyyy:MM:DD:HH:mm:ss", Locale.UK).format(new Date());
-
+        // Tag info for debug
         Log.d(TAG, info);
-        DatabaseReference newRef = mDatabaseReference.push();
-        newRef.setValue(info);
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String userKey = prefs.getString("User ID", null);
+
+        DatabaseReference newRef = mDatabaseReference.child(userKey).child("Activity Data")
+                .child("YEAR:" + new SimpleDateFormat("yyyy", Locale.UK).format(new Date()))
+                .child("MONTH: " + new SimpleDateFormat("MM", Locale.UK).format(new Date()))
+                .child("DAY: " + new SimpleDateFormat("dd", Locale.UK).format(new Date()))
+                .child("TIME: " + new SimpleDateFormat("HH:mm:ss", Locale.UK).format(new Date()));
+
+        String newData = "Transition: " + activityType + " (" + transitionType + ")";
+
+        newRef.setValue(newData);
     }
 
 

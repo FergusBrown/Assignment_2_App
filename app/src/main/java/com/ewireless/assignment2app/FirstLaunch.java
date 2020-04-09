@@ -16,17 +16,15 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class FirstLaunch extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
 
@@ -39,10 +37,10 @@ public class FirstLaunch extends AppCompatActivity implements GoogleApiClient.Co
     private GoogleApiClient googleApiClient;
 
     // UI elements
-    EditText patientName;
-    EditText carerName;
-    EditText carerPhone;
-    EditText carerEmail;
+    EditText patientNameText;
+    EditText carerNameText;
+    EditText carerPhoneText;
+    EditText carerEmailText;
 
     TextView radiusLabel;
     private int radius;
@@ -52,10 +50,10 @@ public class FirstLaunch extends AppCompatActivity implements GoogleApiClient.Co
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_first_launch);
 
-        patientName = (EditText)findViewById(R.id.patientName);
-        carerName = (EditText)findViewById(R.id.carerName);
-        carerEmail = (EditText)findViewById(R.id.carerEmail);
-        carerPhone = (EditText)findViewById(R.id.carerPhone);
+        patientNameText = (EditText)findViewById(R.id.patientName);
+        carerNameText = (EditText)findViewById(R.id.carerName);
+        carerEmailText = (EditText)findViewById(R.id.carerEmail);
+        carerPhoneText = (EditText)findViewById(R.id.carerPhone);
 
         //Slider
         // set a change listener on the SeekBar
@@ -92,15 +90,32 @@ public class FirstLaunch extends AppCompatActivity implements GoogleApiClient.Co
         alert.show();
     }
 
+    FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
+
+    private DatabaseReference mDatabaseReference = mDatabase.getReference();
+
     public void formComplete(View view) {
+        // create a unique user key
+
+        String userKey = mDatabaseReference.child("Users").push().getKey();
+
+        String patientName = patientNameText.getText().toString();
+        String carerName = carerNameText.getText().toString();
+        String carerPhone = carerPhoneText.getText().toString();
+        String carerEmail = carerEmailText.getText().toString();
+        User user = new User(userKey, patientName, carerName, carerPhone, carerEmail, radius, latitude, longitude);
+
+        mDatabaseReference.child("Users").child(userKey).child("Details").setValue(user);
+
         // Set EditTextValues to preferences
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = prefs.edit();
 
-        editor.putString("Patient Name", patientName.getText().toString() );
-        editor.putString("Carer Name", carerName.getText().toString() );
-        editor.putString("Carer Phone", carerPhone.getText().toString() );
-        editor.putString("Carer Email", carerEmail.getText().toString() );
+        editor.putString("User ID", userKey);
+        editor.putString("Patient Name", patientName );
+        editor.putString("Carer Name", carerName );
+        editor.putString("Carer Phone", carerPhone );
+        editor.putString("Carer Email", carerEmail);
         editor.putInt("Geofence Radius", radius);
         editor.putLong("Latitude", Double.doubleToRawLongBits(latitude));
         editor.putLong("Longitude", Double.doubleToRawLongBits(longitude));
@@ -108,6 +123,8 @@ public class FirstLaunch extends AppCompatActivity implements GoogleApiClient.Co
 
         // flush the buffer
         editor.apply();
+
+
 
         // Activity Finished
         finish();
