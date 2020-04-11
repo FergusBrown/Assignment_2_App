@@ -19,4 +19,5 @@
     <string name="title_activity_strat_map">Start Map</string>
     <string name="dashboard_settings">Dashboard</string>
     <string name="title_dashboard">Carer Dashboard</string>
+    <string name="month_picker">Choose Month</string>
 </resources>

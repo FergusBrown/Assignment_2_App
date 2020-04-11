@@ -84,4 +84,7 @@ dependencies {
 
     // required for mpchart
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+
+    // required for month picker
+    implementation 'com.whiteelephant:monthandyearpicker:1.3.0'
 }
