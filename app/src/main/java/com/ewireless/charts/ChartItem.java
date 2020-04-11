@@ -18,10 +18,22 @@ public abstract class ChartItem {
     static final int TYPE_PIECHART = 2;
 
     ChartData<?> mChartData;
+    String[] xTicks;
+    String title;
 
+    // constructor for chart data
     ChartItem(ChartData<?> cd) {
         this.mChartData = cd;
     }
+
+    // constructor for X axis ticks
+    ChartItem(ChartData<?> cd, String[] xTicks, String title) {
+        this.mChartData = cd;
+        this.xTicks = xTicks;
+        this.title = title;
+    }
+
+
 
     public abstract int getItemType();
 

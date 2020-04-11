@@ -21,6 +21,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.ewireless.charts.ChartItem;
+import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
@@ -30,6 +31,7 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import java.text.DateFormatSymbols;
@@ -73,27 +75,7 @@ public class DashboardChartActivity extends AppCompatActivity {
         int year = parseInt(new SimpleDateFormat("yyyy", Locale.UK).format(new Date()));
         int month = parseInt(new SimpleDateFormat("MM", Locale.UK).format(new Date()));
 
-
-
-
-
-        createList(year, month);
-
-
-        /*
-        ListView lv = findViewById(R.id.listView1);
-
-        ArrayList<ChartItem> list = new ArrayList<>();
-
-        // add charts to the list
-        list.add(new LineChartItem(generateDataLine(1), getApplicationContext()));
-
-        list.add(new BarChartItem(generateDataBar(1), getApplicationContext()));
-
-
-        ChartDataAdapter cda = new ChartDataAdapter(getApplicationContext(), list);
-        lv.setAdapter(cda);
-         */
+        generateGraph(year, month);
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -101,27 +83,93 @@ public class DashboardChartActivity extends AppCompatActivity {
         }
     }
 
-    // create list with title
-    private void createList(int year, int month) {
+    private int[] activities = {0, 0, 0, 0};
+
+    private void generateGraph(int year, int month) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String userKey = prefs.getString("User ID", null);
+
+        // TODO: correct year space once working
+        DatabaseReference userRoot = mDatabaseReference.child(userKey);
+        DatabaseReference activityRoot = userRoot.child("Activity Data").child("YEAR:" + year).child("MONTH: " + String.format("%02d", month));
+
+        //ArrayList<BarEntry> barEntries = new ArrayList<>();
+
+        // Find number of days in this month
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR, year);
+        calendar.set(Calendar.MONTH, month);
+        int numDays = calendar.getActualMaximum(Calendar.DATE);
+
+        // listener to get snapshot of database, this method triggers once when created
+        activityRoot.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // for each day in the month
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    // For each entry in that day
+                    for (DataSnapshot snapshot2 : snapshot.getChildren()) {
+                        String user = snapshot2.getValue(String.class);
+                        // get activity type
+                        int activityType = determineActivity(user);
+                        // return activity type
+                        if (activityType > -1) {
+                            activities[activityType] ++;
+                        }
+                    }
+                    // call function to create barchart
+
+
+                    drawGraphs(createBarData(month));
+                    // remove listener once finished
+                    activityRoot.removeEventListener(this);
+                } }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Getting data failed, log a message
+                Log.w(TAG, "activityRoot:onCancelled", databaseError.toException());
+            }
+        });
+
+    }
+
+    private BarData createBarData(int month) {
+        ArrayList<BarEntry> barEntries = new ArrayList<>();
+
         String monthWord = new DateFormatSymbols().getMonths()[month - 1];
 
-        String cadenceTitle = "Cadence Data (" + year + ", " + monthWord + ")";
-        String activityTitle = "Activity Data (" + year + ", " + monthWord + ")";
+        for (int i = 0; i < 4; i++) {
+            barEntries.add(new BarEntry(i, activities[i]));
+        }
 
+        BarDataSet d = new BarDataSet(barEntries, "Activities in " + monthWord);
+        d.setColors(ColorTemplate.VORDIPLOM_COLORS);
+        d.setHighLightAlpha(255);
+
+        BarData cd = new BarData(d);
+        cd.setBarWidth(0.9f);
+        return cd;
+    }
+
+    private void drawGraphs(BarData barData) {
         // add cadence title
         ListView lv = findViewById(R.id.listView1);
 
         ArrayList<ChartItem> list = new ArrayList<>();
 
         // add charts to the list
-        list.add(new LineChartItem(generateDataLine(1), getApplicationContext()));
+        //list.add(new LineChartItem(generateDataLine(1), getApplicationContext()));
 
-        list.add(new BarChartItem(generateDataBar(year, month), getApplicationContext()));
+        final String[] activityStrings = {"Walking", "Running", "In Vehicle", "On Bicycle"};
+        final String barTitle = "Patient Activity Count";
+        BarChartItem barChart = new BarChartItem(barData, activityStrings, barTitle, getApplicationContext());
 
+        list.add(barChart);
 
         ChartDataAdapter cda = new ChartDataAdapter(getApplicationContext(), list);
-        lv.setAdapter(cda);
 
+        // this calls the getView method of the chartItem classes and formats them appropriately
+        lv.setAdapter(cda);
     }
 
     /** adapter that supports 3 different item types */
@@ -191,90 +239,6 @@ public class DashboardChartActivity extends AppCompatActivity {
         return new LineData(sets);
     }
 
-    /**
-     * generates a random ChartData object with just one DataSet
-     *
-     * @return Bar data
-     */
-
-    /*private BarData generateDataBar(int cnt) {
-
-        ArrayList<BarEntry> entries = new ArrayList<>();
-
-
-        // for each day
-        for (int i = 0; i < 12; i++) {
-            entries.add(new BarEntry(i, (int) (Math.random() * 70) + 30));
-        }
-
-        BarDataSet d = new BarDataSet(entries, "New DataSet " + cnt);
-        d.setColors(ColorTemplate.VORDIPLOM_COLORS);
-        d.setHighLightAlpha(255);
-
-        BarData cd = new BarData(d);
-        cd.setBarWidth(0.9f);
-        return cd;
-    }*/
-
-
-    private BarData generateDataBar(int year, int month) {
-
-        String monthWord = new DateFormatSymbols().getMonths()[month - 1];
-
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String userKey = prefs.getString("User ID", null);
-
-        // TODO: correct year space once working
-        DatabaseReference activityRoot = mDatabaseReference.child(userKey).child("Activity Data").child("YEAR:" + year).child("MONTH: " + String.format("%02d", month));
-
-        ArrayList<BarEntry> entries = new ArrayList<>();
-
-        // Find number of days in this month
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.YEAR, year);
-        calendar.set(Calendar.MONTH, month);
-        int numDays = calendar.getActualMaximum(Calendar.DATE);
-
-        int[] activities = {1, 0, 0, 0};
-
-        // listener to get snapshot of database, this method triggers once when created
-        activityRoot.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // for each day in the month
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    // For each entry in that day
-                    for (DataSnapshot snapshot2 : snapshot.getChildren()) {
-                        String user = snapshot2.getValue(String.class);
-                        // get activity type
-                        int activityType = determineActivity(user);
-                        // return activity type
-                        if (activityType > -1) {
-                            activities[activityType] ++;
-                        }
-                    }
-                }
-            }
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // Getting data failed, log a message
-                Log.w(TAG, "activityRoot:onCancelled", databaseError.toException());
-            }
-        });
-
-
-        for (int i = 0; i < 4; i++) {
-            entries.add(new BarEntry(i, activities[i]));
-        }
-
-        BarDataSet d = new BarDataSet(entries, "Activities in " + monthWord);
-        d.setColors(ColorTemplate.VORDIPLOM_COLORS);
-        d.setHighLightAlpha(255);
-
-        BarData cd = new BarData(d);
-        cd.setBarWidth(0.9f);
-        return cd;
-    }
 
     private int determineActivity(String user) {
         Pattern activity_pattern = Pattern.compile("(\\s\\w+)");
