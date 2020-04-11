@@ -27,6 +27,11 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+        debug {
+            debuggable true
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt')
+        }
     }
 
     sourceSets {
@@ -77,5 +82,6 @@ dependencies {
     compile 'com.google.android.gms:play-services-location:10.2.1'
     compile 'com.google.android.gms:play-services-maps:10.2.1'
 
-
+    // required for mpchart
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 }

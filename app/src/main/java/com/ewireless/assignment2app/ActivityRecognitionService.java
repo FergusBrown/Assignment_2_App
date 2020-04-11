@@ -368,7 +368,7 @@ public class ActivityRecognitionService extends Service {
         String userKey = prefs.getString("User ID", null);
 
         DatabaseReference newRef = mDatabaseReference.child(userKey).child("Activity Data")
-                .child("YEAR:" + new SimpleDateFormat("yyyy", Locale.UK).format(new Date()))
+                .child("YEAR: " + new SimpleDateFormat("yyyy", Locale.UK).format(new Date()))
                 .child("MONTH: " + new SimpleDateFormat("MM", Locale.UK).format(new Date()))
                 .child("DAY: " + new SimpleDateFormat("dd", Locale.UK).format(new Date()))
                 .child("TIME: " + new SimpleDateFormat("HH:mm:ss", Locale.UK).format(new Date()));

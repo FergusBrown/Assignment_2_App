@@ -49,7 +49,6 @@ public class GaitAnalysisService extends Service {
     // Database reference initialisation
     FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
 
-    //public static final String masterRef = "Cadence Data";
     private DatabaseReference mDatabaseReference = mDatabase.getReference().child("Users");
 
 
@@ -58,7 +57,7 @@ public class GaitAnalysisService extends Service {
 
     //public float cadence;
 
-    // broadcasr receiver for gait analysis
+    // broadcast receiver for gait analysis
     private final GaitAnalysisServiceReceiver receiver = new GaitAnalysisServiceReceiver();
 
     /******************** End of new definitions added ************************/
@@ -242,7 +241,7 @@ public class GaitAnalysisService extends Service {
         String userKey = prefs.getString("User ID", null);
 
         DatabaseReference timeRef = mDatabaseReference.child(userKey).child("Cadence Data")
-                .child("YEAR:" + year)
+                .child("YEAR: " + year)
                 .child("MONTH: " + month)
                 .child("DAY: " + day)
                 .child("TIME: " + timeStamp);
@@ -253,30 +252,30 @@ public class GaitAnalysisService extends Service {
         // return if not at X and reset if less than threshold
         if(cadence >= cadenceThreshold) {
             secondCount = 0;
-        } else {
+            return;
+        } else if (secondCount < secondThreshold) {
+            secondCount++;
+            return;
+        }
             // return without doing anything if X seconds have not passed
-            while(secondCount < secondThreshold) {
+            /*while(secondCount < secondThreshold) {
                 secondCount++;
+                return;
+            }*/
+
+        if (secondCount == secondThreshold) {
+            secondCount = 0;
+            isWalking = false;
+            // erase last X instances
+            for (int i = 0; i < secondThreshold; i++) {
+                int lastIndex = cadenceData.size()-1;
+                cadenceData.remove(lastIndex);
             }
 
-
-            if (secondCount == secondThreshold) {
-                secondCount = 0;
-                isWalking = false;
-                // erase last X instances
-                for (int i = 0; i < secondThreshold; i++) {
-                    int lastIndex = cadenceData.size()-1;
-                    cadenceData.remove(lastIndex);
-                }
-
-                // set timestamp calue to the list of cadence values
-                timeRef.setValue(cadenceData);
-
-                // clear list
-                cadenceData.clear();
-
-
-            }
+            // set timestamp calue to the list of cadence values
+            timeRef.setValue(cadenceData);
+            // clear list
+            cadenceData.clear();
         }
     }
 
