@@ -144,11 +144,8 @@ public class ActivityRecognitionService extends Service {
     // What happens when an application activity starts the service
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
-        Toast.makeText(this, "Activities service starting", Toast.LENGTH_SHORT).show();
-
         // Create a notification channel for the startForeground method
-        // TODO: if a foreground activity is not called then service is a candidate for freeing uo memory
+        // if a foreground activity is not called then service is a candidate for freeing uo memory
         createNotificationChannel();
 
         // Start a foreground notif so service is always running

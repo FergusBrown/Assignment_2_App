@@ -113,11 +113,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void callSetup() {
-
         startActivity(new Intent(MainActivity.this, FirstLaunch.class));
-        //Toast.makeText(MainActivity.this, "Welcome", Toast.LENGTH_LONG)
-        //.show();
-
     }
 
 
@@ -475,7 +471,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     public void goToMap(View view) {
         Intent intent = new Intent(MainActivity.this, StartMapActivity.class);
-        intent.putExtra(EXTRA_MESSAGE, "ML12 6QB");
+        intent.putExtra(EXTRA_MESSAGE, "EH3 9BX");
         startActivity(intent);
         // TODO: this should stop all services on open
     }
