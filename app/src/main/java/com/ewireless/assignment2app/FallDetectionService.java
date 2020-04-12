@@ -24,13 +24,23 @@ public class FallDetectionService extends Service implements SensorEventListener
     private SensorManager sm;
     private Sensor aSensor;
     private Sensor gSensor;
+    private Sensor mSensor;
 
     float[] accelerometerValues = new float[3];
     float[] gyroscopeValues = new float[3];
+    float[] magnetometerValues = new float[3];
     double aThreshold;
     double gThreshold;
+    double mThreshold;
     double aMax;
     double gMax;
+    double aMax0;
+    double aMax2;
+    double tMin1 = 90;
+    double tMin2 = 90;
+    double theta1;
+    double theta2;
+    double degree;
     long time;
     double ayMin;
     double ayMax;
@@ -44,7 +54,6 @@ public class FallDetectionService extends Service implements SensorEventListener
         public void onTick(long millisUntilFinished) {
             long currentTime = millisUntilFinished / 1000;
             Log.d(TAG, "Countdown time = " + currentTime);
-            //tvTimer.setText("seconds remaining: " + millisUntilFinished / 1000);
         }
 
         public void onFinish() {
@@ -65,11 +74,12 @@ public class FallDetectionService extends Service implements SensorEventListener
 
         sm.registerListener(this, aSensor, SensorManager.SENSOR_DELAY_NORMAL);
         sm.registerListener(this, gSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        sm.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
+        // ignore, this is not required
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
@@ -77,54 +87,44 @@ public class FallDetectionService extends Service implements SensorEventListener
         sm = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
         aSensor = sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         gSensor = sm.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+        mSensor = sm.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
     }
 
     private void calculateOrientation() {
         aThreshold = Math.sqrt(accelerometerValues[0]*accelerometerValues[0] + accelerometerValues[1]*accelerometerValues[1] + accelerometerValues[2]*accelerometerValues[2]);
         gThreshold = Math.sqrt(gyroscopeValues[0]*gyroscopeValues[0] + gyroscopeValues[1]*gyroscopeValues[1] + gyroscopeValues[2]*gyroscopeValues[2]);
+        theta1 = Math.toDegrees(Math.atan((Math.sqrt(accelerometerValues[1]*accelerometerValues[1] + accelerometerValues[2]*accelerometerValues[2]))/(accelerometerValues[0])));
+        theta2 = Math.toDegrees(Math.atan((Math.sqrt(accelerometerValues[1]*accelerometerValues[1] + accelerometerValues[0]*accelerometerValues[0]))/(accelerometerValues[2])));
 
-        if (aThreshold > aMax) aMax = aThreshold;
-        if (gThreshold > gMax) gMax = gThreshold;
+        float[] values = new float[3];
+        float[] R = new float[9];
+
+        SensorManager.getRotationMatrix(R, null, accelerometerValues, magnetometerValues);
+        SensorManager.getOrientation(R, values);
+
+        degree = (float) Math.toDegrees(values[2]);
 
 
-        if (aThreshold > 20 && time == 0 && !isCountRunning) {
-            //Toast.makeText(this, "Fall check 1", Toast.LENGTH_SHORT).show();
-            //aMax = 0;
-            //gMax = 0;
-            if(gThreshold < 10) {
-                //Toast.makeText(this, "Fall check 1", Toast.LENGTH_SHORT).show();
-                Log.d(TAG, "Fall check 1");
-                aMax = 0;
-                gMax = 0;
-                time = System.currentTimeMillis();
+
+        if(f < 1000 && !isCountRunning){
+            f++;
+            if(accelerometerValues[0] > aMax0) aMax0 = accelerometerValues[0];
+            if(accelerometerValues[2] > aMax2) aMax2 = accelerometerValues[2];
+            if(Math.abs(theta1) < tMin1) tMin1 = Math.abs(theta1);
+            if(Math.abs(theta2) < tMin2) tMin2 = Math.abs(theta2);
+            if(aMax0 > 18 && aMax2 > 18 && (tMin1 < 45 || tMin2 < 45)){
+                timer.start();
+                isCountRunning = true;
             }
         }
-
-        if(time > 0) {
-
-            if(accelerometerValues[1] < ayMin) ayMin = accelerometerValues[1];
-            if(accelerometerValues[1] > ayMax) ayMax = accelerometerValues[1];
-            if(ayMin > -5 && ayMax < 5) {
-                Log.d(TAG, "Fall check 2");
-                f = 1;
-            }
-            if(System.currentTimeMillis() - time > 5000) {
-                Log.d(TAG, "time reset");
-                time = 0;
-                ayMin = 0;
-                ayMax = 0;
-            }
-        }
-
-        if(f == 1 && !isCountRunning){
+        else{
             f = 0;
-            timer.start();
-            isCountRunning = true;
+            aMax0 = 0;
+            aMax2 = 0;
+            tMin1 = 90;
+            tMin2 = 90;
         }
     }
-
-
-
 
     @Override
     public void onDestroy() {
@@ -142,6 +142,9 @@ public class FallDetectionService extends Service implements SensorEventListener
         if(event.sensor.getType()==Sensor.TYPE_GYROSCOPE){
             gyroscopeValues = event.values;
         }
+        if(event.sensor.getType()==Sensor.TYPE_MAGNETIC_FIELD){
+            magnetometerValues = event.values;
+        }
         calculateOrientation();
     }
 
@@ -153,7 +156,8 @@ public class FallDetectionService extends Service implements SensorEventListener
     public void sendMessage(){
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-        String messageToSend = "Fall has been detected";
+        String patientName = prefs.getString("Patient Name", "");
+        String messageToSend = "Fall has been detected for your patient, " + patientName;
         String number = prefs.getString("Carer Phone", "0000");
 
         SmsManager sms = SmsManager.getDefault();
