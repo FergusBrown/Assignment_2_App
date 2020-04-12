@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <drawable name="button_default">#930000</drawable>
+    <drawable name="button_focused">#7a0000</drawable>
+    <drawable name="button_pressed">#5e0000</drawable>
+    <drawable name="blue_default">#00289F</drawable>
+    <drawable name="blue_focused">#00175c</drawable>
+    <drawable name="blue_pressed">#00175c</drawable>
+    <drawable name="green_default">#267C00</drawable>
+    <drawable name="green_focused">#1b5700</drawable>
+    <drawable name="green_pressed">#1b5700</drawable>
+</resources>
