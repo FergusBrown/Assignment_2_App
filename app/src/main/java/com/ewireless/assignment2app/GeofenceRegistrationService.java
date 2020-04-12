@@ -46,7 +46,7 @@ public class GeofenceRegistrationService extends IntentService {
             int transaction = geofencingEvent.getGeofenceTransition();
             List<Geofence> geofences = geofencingEvent.getTriggeringGeofences();
             Geofence geofence = geofences.get(0);
-            String geofenceTransitionDetails = getGeofenceTrasitionDetails(transaction, geofences );
+            String geofenceTransitionDetails = getGeofenceTrasitionDetails(transaction, geofences);
             if (transaction == Geofence.GEOFENCE_TRANSITION_ENTER && geofence.getRequestId().equals(Constants.GEOFENCE_ID)) {
                 Log.d(TAG, "You are inside home area");
             } else {
@@ -77,7 +77,7 @@ public class GeofenceRegistrationService extends IntentService {
     private void sendMessage(String geofenceTransitionDetails) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-        String messageToSend = "Your patient, " + prefs.getString("Patient Name", "") + ",has " + geofenceTransitionDetails + "home.";
+        String messageToSend = "Your patient, " + prefs.getString("Patient Name", "") + ",has " + geofenceTransitionDetails + ".";
         String number = prefs.getString("Carer Phone", "0000");
 
         SmsManager sms = SmsManager.getDefault();
