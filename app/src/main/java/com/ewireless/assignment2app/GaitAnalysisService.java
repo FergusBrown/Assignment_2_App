@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorManager;
 import android.os.IBinder;
@@ -14,6 +15,10 @@ import android.os.PowerManager.WakeLock;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.preference.PreferenceManager;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -28,7 +33,13 @@ import org.spin.gaitlib.filter.FilterNotSetException;
 import org.spin.gaitlib.gait.IClassifierModelLoadingListener;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.Locale;
 
 import static weka.core.mathematicalexpression.sym.error;
@@ -38,8 +49,7 @@ public class GaitAnalysisService extends Service {
     // Database reference initialisation
     FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
 
-    public static final String masterRef = "Cadence Data";
-    private DatabaseReference cadenceReference = mDatabase.getReference().child(masterRef);
+    private DatabaseReference mDatabaseReference = mDatabase.getReference().child("Users");
 
 
     // Tag for log prints
@@ -47,7 +57,7 @@ public class GaitAnalysisService extends Service {
 
     //public float cadence;
 
-    // broadcasr receiver for gait analysis
+    // broadcast receiver for gait analysis
     private final GaitAnalysisServiceReceiver receiver = new GaitAnalysisServiceReceiver();
 
     /******************** End of new definitions added ************************/
@@ -217,38 +227,55 @@ public class GaitAnalysisService extends Service {
         }
     }
 
-
+    private String year;
+    private  String month;
+    private  String day;
     private String timeStamp;
+
+    // list for storing data, key for seconds, float for cadence value
+    private List<Float> cadenceData = new ArrayList<Float>();
 
     private void handleWalking(float cadence) {
 
-        DatabaseReference timeRef = mDatabase.getReference(masterRef).child(timeStamp);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String userKey = prefs.getString("User ID", null);
 
-        // return if not at 3 and reset if less than threshold
+        DatabaseReference timeRef = mDatabaseReference.child(userKey).child("Cadence Data")
+                .child("YEAR: " + year)
+                .child("MONTH: " + month)
+                .child("DAY: " + day)
+                .child("TIME: " + timeStamp);
+
+        // Add data to list
+        cadenceData.add(cadence);
+
+        // return if not at X and reset if less than threshold
         if(cadence >= cadenceThreshold) {
             secondCount = 0;
-        } else {
-            // return without doing anything if 3 seconds have not passed
-            while(secondCount < secondThreshold) {
-                secondCount++;
-            }
-
-            if (secondCount == secondThreshold) {
-                secondCount = 0;
-                isWalking = false;
-                for (int i = 0; i < secondThreshold; i++) {
-                    String key = timeRef.getKey();
-                    timeRef.child(key).removeValue();
-                }
-
-            }
+            return;
+        } else if (secondCount < secondThreshold) {
+            secondCount++;
+            return;
         }
+            // return without doing anything if X seconds have not passed
+            /*while(secondCount < secondThreshold) {
+                secondCount++;
+                return;
+            }*/
 
+        if (secondCount == secondThreshold) {
+            secondCount = 0;
+            isWalking = false;
+            // erase last X instances
+            for (int i = 0; i < secondThreshold; i++) {
+                int lastIndex = cadenceData.size()-1;
+                cadenceData.remove(lastIndex);
+            }
 
-        // TODO : if finished walking then erase 2 instances pushed
-        if(isWalking) {
-            DatabaseReference newRef = timeRef.push();
-            newRef.setValue(cadence);
+            // set timestamp calue to the list of cadence values
+            timeRef.setValue(cadenceData);
+            // clear list
+            cadenceData.clear();
         }
     }
 
@@ -265,7 +292,10 @@ public class GaitAnalysisService extends Service {
 
             if (secondCount == secondThreshold) {
                 secondCount = 0;
-                timeStamp = new SimpleDateFormat("yyyy:MM:DD:HH:mm:ss", Locale.UK).format(new Date());
+                year = new SimpleDateFormat("yyyy", Locale.UK).format(new Date());
+                month = new SimpleDateFormat("MM", Locale.UK).format(new Date());
+                day = new SimpleDateFormat("dd", Locale.UK).format(new Date());
+                timeStamp = new SimpleDateFormat("HH:mm:ss", Locale.UK).format(new Date());
                 isWalking = true;
             }
         }

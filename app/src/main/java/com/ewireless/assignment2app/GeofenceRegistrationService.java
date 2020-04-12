@@ -7,14 +7,17 @@ import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
+import android.telephony.SmsManager;
 import android.text.TextUtils;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
+import androidx.preference.PreferenceManager;
 
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofenceStatusCodes;
@@ -34,6 +37,8 @@ public class GeofenceRegistrationService extends IntentService {
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
+
+        Log.d(TAG, "onHandleIntent");
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
         if (geofencingEvent.hasError()) {
             Log.d(TAG, "GeofencingEvent error " + geofencingEvent.getErrorCode());
@@ -41,13 +46,13 @@ public class GeofenceRegistrationService extends IntentService {
             int transaction = geofencingEvent.getGeofenceTransition();
             List<Geofence> geofences = geofencingEvent.getTriggeringGeofences();
             Geofence geofence = geofences.get(0);
+            String geofenceTransitionDetails = getGeofenceTrasitionDetails(transaction, geofences);
             if (transaction == Geofence.GEOFENCE_TRANSITION_ENTER && geofence.getRequestId().equals(Constants.GEOFENCE_ID)) {
-                Log.d(TAG, "You are inside Edinburgh");
+                Log.d(TAG, "You are inside home area");
             } else {
-                Log.d(TAG, "You are outside Edinburgh");
+                Log.d(TAG, "You are outside home");
+                sendMessage(geofenceTransitionDetails);
             }
-            String geofenceTransitionDetails = getGeofenceTrasitionDetails(transaction, geofences );
-
             sendNotification( geofenceTransitionDetails );
         }
     }
@@ -63,10 +68,26 @@ public class GeofenceRegistrationService extends IntentService {
 
         String status = null;
         if ( geoFenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER )
-            status = "Entering ";
+            status = "entered ";
         else if ( geoFenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT )
-            status = "Exiting ";
+            status = "exited ";
         return status + TextUtils.join( ", ", triggeringGeofencesList);
+    }
+
+    private void sendMessage(String geofenceTransitionDetails) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+        String messageToSend = "Your patient, " + prefs.getString("Patient Name", "") + ",has " + geofenceTransitionDetails + ".";
+        String number = prefs.getString("Carer Phone", "0000");
+
+        SmsManager sms = SmsManager.getDefault();
+        PendingIntent sentPI;
+        String SENT = "SMS_SENT";
+
+        sentPI = PendingIntent.getBroadcast(this, 0,new Intent(SENT), 0);
+
+        sms.sendTextMessage(number, null, messageToSend, sentPI, null);
+        Log.d(TAG,"sendMessage Complete");
     }
 
     // Send a notification, requires API level 16
@@ -97,7 +118,7 @@ public class GeofenceRegistrationService extends IntentService {
                 .setSmallIcon(R.mipmap.ic_launcher_round)
                 .setColor(Color.RED)
                 .setContentTitle(msg)
-                .setContentText("Geofence Notification!")
+                .setContentText("You have left home!")
                 .setContentIntent(notificationPendingIntent)
                 .setDefaults(Notification.DEFAULT_LIGHTS | Notification.DEFAULT_VIBRATE | Notification.DEFAULT_SOUND)
                 .setAutoCancel(true);

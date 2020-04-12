@@ -9,9 +9,11 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 
 
+import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -49,13 +51,13 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
-public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
+public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     // Tag for log prints
     private final static String TAG = "MainActivity";
 
     // Extra message for find home activity
-    public final static String EXTRA_MESSAGE ="com.ewireless.assignment2app";
+    public final static String EXTRA_MESSAGE = "com.ewireless.assignment2app";
 
     // Boolean for whether device is running API level 29 or later
     // TODO: implement permission check
@@ -70,7 +72,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private PermissionsHelper permissionsHelper;
 
     // required for geofencing
-    private static final int REQUEST_LOCATION_PERMISSION_CODE = 101;
     private GoogleMap googleMap;
     private GeofencingRequest geofencingRequest;
     private GoogleApiClient googleApiClient;
@@ -88,22 +89,21 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
         // check permissions
-        if (!checkPermissions()){
+        if (!checkPermissions()) {
             // Check permissions
             requestPermissions();
         }
 
-        // TODO: replace this with a splash screen or intro screen
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // bind map fragment
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+        // bind map fragment (For debug)
+        //SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+        //        .findFragmentById(R.id.map);
+        //mapFragment.getMapAsync(this);
 
-        // initialise google API client
+        // initialise google API client if setup complete
         googleApiClient = new GoogleApiClient.Builder(this)
                 .addApi(LocationServices.API)
                 .addConnectionCallbacks(this)
@@ -113,11 +113,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void callSetup() {
-
         startActivity(new Intent(MainActivity.this, FirstLaunch.class));
-        //Toast.makeText(MainActivity.this, "Welcome", Toast.LENGTH_LONG)
-                //.show();
-
     }
 
 
@@ -181,7 +177,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onStart();
 
         // reconnect to google API client
-        googleApiClient.reconnect();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean setupComplete = prefs.getBoolean("Setup Complete", false);
+
+        if (setupComplete) {
+            googleApiClient.reconnect();
+        }
+
     }
 
     @Override
@@ -226,6 +228,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
             return true;
+        } else if (id == R.id.dashboard_settings) {
+            Intent intent = new Intent(this, DashboardChartActivity.class);
+            startActivity(intent);
+            return true;
         }
         return super.onOptionsItemSelected(item);
 
@@ -247,18 +253,20 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         int fineLocationPerm = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
         int coarseLocationPerm = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION);
         int smsPerm = ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS);
+        int callPerm = ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE);
 
         //TODO: this perm is only for API 29+, may need to be handled differently for lower level APIs
         int backgroundLocationPerm = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION);
 
-        if(activityPerm == PackageManager.PERMISSION_GRANTED
-            && foregroundPerm == PackageManager.PERMISSION_GRANTED
+        if (activityPerm == PackageManager.PERMISSION_GRANTED
+                && foregroundPerm == PackageManager.PERMISSION_GRANTED
                 && wakePerm == PackageManager.PERMISSION_GRANTED
                 && writePerm == PackageManager.PERMISSION_GRANTED
                 && fineLocationPerm == PackageManager.PERMISSION_GRANTED
                 && coarseLocationPerm == PackageManager.PERMISSION_GRANTED
                 && backgroundLocationPerm == PackageManager.PERMISSION_GRANTED
-                && smsPerm == PackageManager.PERMISSION_GRANTED) {
+                && smsPerm == PackageManager.PERMISSION_GRANTED
+                && callPerm == PackageManager.PERMISSION_GRANTED) {
             return true;
         } else {
             return false;
@@ -277,8 +285,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION,
                 Manifest.permission.ACCESS_BACKGROUND_LOCATION,
-                Manifest.permission.SEND_SMS
-                );
+                Manifest.permission.SEND_SMS,
+                Manifest.permission.CALL_PHONE
+        );
     }
 
     /*************** End methods for checking permissions *********************/
@@ -384,7 +393,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
 
-
     /*************** geofence debug below (displays geofence perimeter and location on map *********************/
 
     // required for markers
@@ -422,7 +430,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .radius(geofenceRadius)
                 .strokeColor(Color.RED)
                 .strokeWidth(4f));
-
 
 
     }
@@ -464,11 +471,58 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     public void goToMap(View view) {
         Intent intent = new Intent(MainActivity.this, StartMapActivity.class);
-        intent.putExtra(EXTRA_MESSAGE, "ML12 6QB");
+        intent.putExtra(EXTRA_MESSAGE, "EH3 9BX");
         startActivity(intent);
         // TODO: this should stop all services on open
     }
 
     /*************** End methods for find home **********************/
 
+    /*************** Begin methods for yes/no/emergency presses ********************/
+
+    public void yesPress(View view) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String patientName = prefs.getString("Patient Name", "");
+
+        String message = "STATUS: " + patientName + " is OK.";
+        sendMessage(message);
+    }
+
+    public void noPress(View view) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String patientName = prefs.getString("Patient Name", "");
+
+        String message = "STATUS: " + patientName + " is NOT OK.";
+        sendMessage(message);
+    }
+
+    public void emergencyPress(View view) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String phoneNumber = prefs.getString("Carer Phone", "0000");
+
+        Intent phoneIntent = new Intent(Intent.ACTION_CALL);
+        phoneIntent.setData(Uri.parse("tel:" + phoneNumber));
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            startActivity(phoneIntent);
+            return;
+        }
+
+    }
+
+
+    // method to send message
+    public void sendMessage(String message){
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String phoneNumber = prefs.getString("Carer Phone", "0000");
+
+        SmsManager sms = SmsManager.getDefault();
+        PendingIntent sentPI;
+        String SENT = "SMS_SENT";
+
+        sentPI = PendingIntent.getBroadcast(this, 0,new Intent(SENT), 0);
+
+        sms.sendTextMessage(phoneNumber, null, message, sentPI, null);
+    }
+
+    /*************** End methods for yes/no/emergency presses ********************/
 }

@@ -39,13 +39,7 @@ uses-sdk
 INJECTED from C:\Users\Fergus\StudioProjects\Assignment_2_App\gaitLib\src\main\AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from C:\Users\Fergus\StudioProjects\Assignment_2_App\gaitLib\src\main\AndroidManifest.xml
 INJECTED from C:\Users\Fergus\StudioProjects\Assignment_2_App\gaitLib\src\main\AndroidManifest.xml
-INJECTED from C:\Users\Fergus\StudioProjects\Assignment_2_App\gaitLib\src\main\AndroidManifest.xml
-INJECTED from C:\Users\Fergus\StudioProjects\Assignment_2_App\gaitLib\src\main\AndroidManifest.xml
 	android:targetSdkVersion
-		INJECTED from C:\Users\Fergus\StudioProjects\Assignment_2_App\gaitLib\src\main\AndroidManifest.xml
-		ADDED from C:\Users\Fergus\StudioProjects\Assignment_2_App\gaitLib\src\main\AndroidManifest.xml
-		INJECTED from C:\Users\Fergus\StudioProjects\Assignment_2_App\gaitLib\src\main\AndroidManifest.xml
-	android:minSdkVersion
 		INJECTED from C:\Users\Fergus\StudioProjects\Assignment_2_App\gaitLib\src\main\AndroidManifest.xml
 		ADDED from C:\Users\Fergus\StudioProjects\Assignment_2_App\gaitLib\src\main\AndroidManifest.xml
 		INJECTED from C:\Users\Fergus\StudioProjects\Assignment_2_App\gaitLib\src\main\AndroidManifest.xml

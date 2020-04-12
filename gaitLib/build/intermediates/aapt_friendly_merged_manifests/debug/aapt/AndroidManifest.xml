@@ -4,9 +4,7 @@
     android:versionCode="1"
     android:versionName="1.0" >
 
-    <uses-sdk
-        android:minSdkVersion="15"
-        android:targetSdkVersion="29" />
+    <uses-sdk android:targetSdkVersion="29" />
 
     <!-- Permissions required by gaitlib -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
