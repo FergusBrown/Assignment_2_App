@@ -155,7 +155,7 @@ public class DashboardChartActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 // For each day
                 for (DataSnapshot activitySnap : dataSnapshot.child("Activity Data")
-                        .child("YEAR:" + year)
+                        .child("YEAR: " + year)
                         .child("MONTH: " + String.format("%02d", month))
                         .getChildren()) {
                     // For each entry in that day
