@@ -22,6 +22,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.ewireless.charts.ChartItem;
+import com.ewireless.charts.LineChartItem;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
@@ -39,10 +40,14 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 import com.whiteelephant.monthpicker.MonthPickerDialog;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.YearMonth;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -129,25 +134,22 @@ public class DashboardChartActivity extends AppCompatActivity {
     }
 
 
-    public int[] activities = {0, 0, 0, 0};
+    // there are 4 activity types to chart
+    public int[] activities = new int[4];
+
+    // max days in a month is 31
     float[] cadenceAverages = new float[31];
 
     private void generateGraph(int year, int month) {
         // clear activities and cadence data
         Arrays.fill(activities,0);
+        Arrays.fill(cadenceAverages,0f);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         String userKey = prefs.getString("User ID", null);
         
         DatabaseReference userRoot = mDatabaseReference.child(userKey);
         //DatabaseReference activityRoot = userRoot.child("Activity Data").child("YEAR: " + year).child("MONTH: " + String.format("%02d", month));
         //DatabaseReference cadenceRoot = userRoot.child("Cadence Data").child("YEAR: " + year).child("MONTH: " + String.format("%02d", month));
-
-        // Find number of days in this month
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.YEAR, year);
-        calendar.set(Calendar.MONTH, month);
-        int numDays = calendar.getActualMaximum(Calendar.DATE);
-
 
         // listener to get snapshot of database, this method triggers once when created
         userRoot.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -164,16 +166,18 @@ public class DashboardChartActivity extends AppCompatActivity {
                     }
                 }
 
-                // For each entry in that day
+                // For each day
                 for (DataSnapshot cadenceSnap : dataSnapshot.child("Cadence Data")
                         .child("YEAR: " + year)
                         .child("MONTH: " + String.format("%02d", month))
                         .getChildren()) {
-                        getCadenceData(cadenceSnap);
+
+                    String childName = cadenceSnap.getKey();
+                    getCadenceData(cadenceSnap, childName);
                 }
 
                 // call function to create barchart
-                drawGraphs(createBarData(month));
+                drawGraphs(year, month);
                 // remove listener once finished
                 userRoot.removeEventListener(this);
             }
@@ -186,13 +190,44 @@ public class DashboardChartActivity extends AppCompatActivity {
 
     }
 
-    private void getCadenceData(DataSnapshot snapshot) {
-//        Map day = snapshot.getValue(Map.class);
-//        int dayNum;
+    private LineData createLineData(int year, int month) {
+        ArrayList<Entry> lineEntries = new ArrayList<>();
 
-  //      Pattern day_pattern = Pattern.compile("(\\d+)");
+        String monthWord = new DateFormatSymbols().getMonths()[month - 1];
 
-        /*Matcher dayMatcher = day_pattern.matcher(day);
+        // Find number of days in this month
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR, year);
+        calendar.set(Calendar.MONTH, month - 1);
+        int numDays = calendar.getActualMaximum(Calendar.DATE);
+
+        for (int i = 0; i < numDays; i++) {
+            lineEntries.add(new BarEntry(i + 1, cadenceAverages[i]));
+        }
+
+        LineDataSet d1 = new LineDataSet(lineEntries, "Days in " + monthWord);
+        d1.setLineWidth(2.5f);
+        d1.setCircleRadius(4.5f);
+        d1.setHighLightColor(Color.rgb(244, 117, 117));
+        d1.setDrawValues(false);
+
+
+        ArrayList<ILineDataSet> sets = new ArrayList<>();
+        sets.add(d1);;
+
+        return new LineData(sets);
+
+    }
+
+    GenericTypeIndicator<List<Float>> newType = new GenericTypeIndicator<List<Float>>() {};
+
+    private void getCadenceData(DataSnapshot snapshot, String childName) {
+        //Map day = snapshot.getValue(Map.class);
+        int dayNum;
+
+        Pattern day_pattern = Pattern.compile("(\\d+)");
+
+        Matcher dayMatcher = day_pattern.matcher(childName);
 
         if(dayMatcher.find()) {
             dayNum = parseInt(dayMatcher.group(1));
@@ -201,17 +236,19 @@ public class DashboardChartActivity extends AppCompatActivity {
         }
 
         List<Float> snapAverage = new ArrayList<Float>();
+
         // find average of all cadence values stored for this day
         for (DataSnapshot walkSnaps : snapshot.getChildren()) {
             List<Float> cadenceData = new ArrayList<Float>();
             // add all value to list
-            cadenceData = walkSnaps.getValue(List.class);
+            cadenceData = walkSnaps.getValue(newType);
             // find average
             snapAverage.add(getAverage(cadenceData));
         }
 
-        cadenceAverages[dayNum] = getAverage(snapAverage);
-*/
+        // starts at index 0
+        cadenceAverages[dayNum-1] = getAverage(snapAverage);
+
         return;
 
     }
@@ -219,7 +256,7 @@ public class DashboardChartActivity extends AppCompatActivity {
     private Float getAverage(List<Float> cadenceData) {
         Float sum = 0f;
         if(!cadenceData.isEmpty()) {
-            for (Float datum: cadenceData) {
+            for (float datum: cadenceData) {
                 sum += datum;
             }
             return sum / cadenceData.size();
@@ -297,20 +334,38 @@ public class DashboardChartActivity extends AppCompatActivity {
         return cd;
     }
 
-    private void drawGraphs(BarData barData) {
+
+    private void drawGraphs(int year, int month) {
+
+        // create chart data
+        BarData barData = createBarData(month);
+        LineData lineData = createLineData(year, month);
+
         // add cadence title
         ListView lv = findViewById(R.id.listView1);
 
         ArrayList<ChartItem> list = new ArrayList<>();
 
-        // add charts to the list
-        //list.add(new LineChartItem(generateDataLine(1), getApplicationContext()));
+
+
 
         final String[] activityStrings = {"Walking", "Running", "In Vehicle", "On Bicycle"};
         final String barTitle = "Patient Activity Count";
         BarChartItem barChart = new BarChartItem(barData, activityStrings, barTitle, getApplicationContext());
 
+
+
+        // Find number of days in this month
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR, year);
+        calendar.set(Calendar.MONTH, month - 1);
+        int numDays = calendar.getActualMaximum(Calendar.DATE);
+        final String lineTitle = "Average Cadence Frequency (Hz)";
+        LineChartItem lineChart = new LineChartItem(lineData, numDays, lineTitle, getApplicationContext());
+
+        // add charts to the list
         list.add(barChart);
+        list.add(lineChart);
 
         ChartDataAdapter cda = new ChartDataAdapter(getApplicationContext(), list);
 
@@ -350,69 +405,6 @@ public class DashboardChartActivity extends AppCompatActivity {
         public int getViewTypeCount() {
             return 3; // we have 3 different item-types
         }
-    }
-
-    /**
-     * generates a random ChartData object with just one DataSet
-     *
-     * @return Line data
-     */
-    private LineData generateDataLine(int cnt) {
-
-        ArrayList<Entry> values1 = new ArrayList<>();
-
-        for (int i = 0; i < 12; i++) {
-            values1.add(new Entry(i, (int) (Math.random() * 65) + 40));
-        }
-
-        LineDataSet d1 = new LineDataSet(values1, "New DataSet " + cnt + ", (1)");
-        d1.setLineWidth(2.5f);
-        d1.setCircleRadius(4.5f);
-        d1.setHighLightColor(Color.rgb(244, 117, 117));
-        d1.setDrawValues(false);
-
-        ArrayList<Entry> values2 = new ArrayList<>();
-
-        for (int i = 0; i < 12; i++) {
-            values2.add(new Entry(i, values1.get(i).getY() - 30));
-        }
-
-        LineDataSet d2 = new LineDataSet(values2, "New DataSet " + cnt + ", (2)");
-        d2.setLineWidth(2.5f);
-        d2.setCircleRadius(4.5f);
-        d2.setHighLightColor(Color.rgb(244, 117, 117));
-        d2.setColor(ColorTemplate.VORDIPLOM_COLORS[0]);
-        d2.setCircleColor(ColorTemplate.VORDIPLOM_COLORS[0]);
-        d2.setDrawValues(false);
-
-        ArrayList<ILineDataSet> sets = new ArrayList<>();
-        sets.add(d1);
-        sets.add(d2);
-
-        return new LineData(sets);
-    }
-
-
-    /**
-     * generates a random ChartData object with just one DataSet
-     *
-     * @return Pie data
-     */
-    private PieData generateDataPie() {
-
-        ArrayList<PieEntry> entries = new ArrayList<>();
-
-        for (int i = 0; i < 4; i++) {
-            entries.add(new PieEntry((float) ((Math.random() * 70) + 30), "Quarter " + (i+1)));
-        }
-
-        PieDataSet d = new PieDataSet(entries, "");
-
-        // space between slices
-        d.setSliceSpace(2f);
-        d.setColors(ColorTemplate.VORDIPLOM_COLORS);
-
-        return new PieData(d);
     }
 
     @Override

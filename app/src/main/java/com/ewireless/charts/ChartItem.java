@@ -20,6 +20,7 @@ public abstract class ChartItem {
     ChartData<?> mChartData;
     String[] xTicks;
     String title;
+    int maxTicks;
 
     // constructor for chart data
     ChartItem(ChartData<?> cd) {
@@ -30,6 +31,13 @@ public abstract class ChartItem {
     ChartItem(ChartData<?> cd, String[] xTicks, String title) {
         this.mChartData = cd;
         this.xTicks = xTicks;
+        this.title = title;
+    }
+
+    // constructor for max xTicks
+    ChartItem(ChartData<?> cd, int maxTicks, String title) {
+        this.mChartData = cd;
+        this.maxTicks = maxTicks;
         this.title = title;
     }
 

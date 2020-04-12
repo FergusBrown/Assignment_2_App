@@ -3,9 +3,12 @@ package com.ewireless.charts;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Typeface;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.TextView;
 
 import com.ewireless.assignment2app.R;
 import com.github.mikephil.charting.charts.LineChart;
@@ -21,6 +24,13 @@ public class LineChartItem extends ChartItem {
 
     public LineChartItem(ChartData<?> cd, Context c) {
         super(cd);
+
+        mTf = Typeface.defaultFromStyle(Typeface.NORMAL);
+    }
+
+    // constructor for X axis ticks
+    public LineChartItem(ChartData<?> cd, int maxTicks, String title, Context c) {
+        super(cd, maxTicks, title);
 
         mTf = Typeface.defaultFromStyle(Typeface.NORMAL);
     }
@@ -44,6 +54,12 @@ public class LineChartItem extends ChartItem {
                     R.layout.list_item_linechart, null);
             holder.chart = convertView.findViewById(R.id.chart);
 
+            // initialise text view
+            holder.chart_title = convertView.findViewById(R.id.chart_title);
+            holder.chart_title.setText(title);
+            holder.chart_title.setTextColor(Color.BLACK);
+            holder.chart_title.setGravity(Gravity.CENTER);
+
             convertView.setTag(holder);
 
         } else {
@@ -60,6 +76,9 @@ public class LineChartItem extends ChartItem {
         xAxis.setTypeface(mTf);
         xAxis.setDrawGridLines(false);
         xAxis.setDrawAxisLine(true);
+        //xAxis.setLabelCount(maxTicks);
+        xAxis.setAxisMinimum(1f);
+        xAxis.setAxisMaximum(maxTicks);
 
         YAxis leftAxis = holder.chart.getAxisLeft();
         leftAxis.setTypeface(mTf);
@@ -84,5 +103,6 @@ public class LineChartItem extends ChartItem {
 
     private static class ViewHolder {
         LineChart chart;
+        TextView chart_title;
     }
 }
