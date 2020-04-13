@@ -41,6 +41,7 @@ public class FirstLaunch extends AppCompatActivity implements GoogleApiClient.Co
     EditText carerNameText;
     EditText carerPhoneText;
     EditText carerEmailText;
+    EditText postCodeText;
 
     TextView radiusLabel;
     private int radius;
@@ -54,6 +55,7 @@ public class FirstLaunch extends AppCompatActivity implements GoogleApiClient.Co
         carerNameText = (EditText)findViewById(R.id.carerName);
         carerEmailText = (EditText)findViewById(R.id.carerEmail);
         carerPhoneText = (EditText)findViewById(R.id.carerPhone);
+        postCodeText = (EditText)findViewById(R.id.postCode);
 
         //Slider
         // set a change listener on the SeekBar
@@ -103,7 +105,9 @@ public class FirstLaunch extends AppCompatActivity implements GoogleApiClient.Co
         String carerName = carerNameText.getText().toString();
         String carerPhone = carerPhoneText.getText().toString();
         String carerEmail = carerEmailText.getText().toString();
-        User user = new User(userKey, patientName, carerName, carerPhone, carerEmail, radius, latitude, longitude);
+        String postCode = postCodeText.getText().toString();
+
+        User user = new User(userKey, patientName, carerName, carerPhone, carerEmail, postCode, radius, latitude, longitude);
 
         mDatabaseReference.child("Users").child(userKey).child("Details").setValue(user);
 
@@ -116,6 +120,7 @@ public class FirstLaunch extends AppCompatActivity implements GoogleApiClient.Co
         editor.putString("Carer Name", carerName );
         editor.putString("Carer Phone", carerPhone );
         editor.putString("Carer Email", carerEmail);
+        editor.putString("Postcode", postCode);
         editor.putInt("Geofence Radius", radius);
         editor.putLong("Latitude", Double.doubleToRawLongBits(latitude));
         editor.putLong("Longitude", Double.doubleToRawLongBits(longitude));

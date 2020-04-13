@@ -33,6 +33,12 @@
         android:layout_height="wrap_content"
         android:hint="Carer Email Address" />
 
+    <EditText
+        android:id="@+id/postCode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Home Postcode" />
+
     <TextView
         android:id="@+id/radiusText"
         android:layout_margin="20dp"

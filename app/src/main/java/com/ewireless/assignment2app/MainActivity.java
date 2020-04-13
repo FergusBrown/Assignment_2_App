@@ -1,6 +1,7 @@
 package com.ewireless.assignment2app;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -470,8 +471,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     /*************** Begin methods for find home ********************/
 
     public void goToMap(View view) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String postCode = prefs.getString("Postcode", "");
+
         Intent intent = new Intent(MainActivity.this, StartMapActivity.class);
-        intent.putExtra(EXTRA_MESSAGE, "EH3 9BX");
+        intent.putExtra(EXTRA_MESSAGE, postCode);
         startActivity(intent);
         // TODO: this should stop all services on open
     }
@@ -496,16 +500,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         sendMessage(message);
     }
 
+    @SuppressLint("MissingPermission")
     public void emergencyPress(View view) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         String phoneNumber = prefs.getString("Carer Phone", "0000");
 
         Intent phoneIntent = new Intent(Intent.ACTION_CALL);
         phoneIntent.setData(Uri.parse("tel:" + phoneNumber));
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-            startActivity(phoneIntent);
-            return;
-        }
+        startActivity(phoneIntent);
+        return;
 
     }
 

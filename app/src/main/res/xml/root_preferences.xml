@@ -44,6 +44,12 @@
             app:useSimpleSummaryProvider="true"
             app:key="Carer Email" />
 
+        <EditTextPreference
+            app:dialogTitle="What is the patient's home postcode?"
+            app:title="Patient Postcode"
+            app:useSimpleSummaryProvider="true"
+            app:key="Postcode" />
+
         <SeekBarPreference
             app:dialogTitle="How big should the geofence radius be (metres)?"
             app:title="Patient Home Radius (metres)"
@@ -52,16 +58,6 @@
             app:key="Geofence Radius"
             />
 
-        <!-- OLD
-        <ListPreference
-            app:dialogTitle="Select alignment"
-            app:defaultValue="true"
-            app:entries="@array/alignment_entries"
-            app:entryValues="@array/alignment_values"
-            app:key="alignment"
-            app:title="@string/alignment_title"
-            app:summary="Choose whether the compass points to the magnetic or geometric north" />
-        -->
     </PreferenceCategory>
 
 </PreferenceScreen>

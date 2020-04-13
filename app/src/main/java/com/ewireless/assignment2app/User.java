@@ -9,6 +9,7 @@ public class User {
     public String carerName;
     public String carerPhone;
     public String carerEmail;
+    public String postCode;
     public int geofenceRadius;
     public double latitude;
     public double longitude;
@@ -18,6 +19,7 @@ public class User {
                 String carerName,
                 String carerPhone,
                 String carerEmail,
+                String postCode,
                 int geofenceRadius,
                 double latitude,
                 double longitude) {
@@ -27,6 +29,7 @@ public class User {
         this.carerName = carerName;
         this.carerPhone = carerPhone;
         this.carerEmail = carerEmail;
+        this.postCode = postCode;
         this.geofenceRadius = geofenceRadius;
         this.latitude = latitude;
         this.longitude = longitude;

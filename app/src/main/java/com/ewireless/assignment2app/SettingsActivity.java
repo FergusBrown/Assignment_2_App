@@ -53,10 +53,12 @@ public class SettingsActivity extends AppCompatActivity {
         String carerName = prefs.getString("Carer Name", null);
         String carerPhone = prefs.getString("Carer Phone", null);
         String carerEmail = prefs.getString("Carer Email", null);
+        String postCode = prefs.getString("Postcode", null);
+
         int geofenceRadius = prefs.getInt("Geofence Radius", 50);
         double latitude = Double.longBitsToDouble(prefs.getLong("Latitude", 0));
         double longitude = Double.longBitsToDouble(prefs.getLong("Longitude", 0));
-        User user = new User(userKey, patientName, carerName, carerPhone, carerEmail, geofenceRadius, latitude, longitude);
+        User user = new User(userKey, patientName, carerName, carerPhone, carerEmail, postCode, geofenceRadius, latitude, longitude);
 
         mDatabaseReference.child("Users").child(userKey).child("Details").setValue(user);
 
