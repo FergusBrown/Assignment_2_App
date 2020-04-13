@@ -186,19 +186,8 @@ public class GaitAnalysisService extends Service {
 
             if (GaitAnalysisService.GAIT_UPDATE.equals(action)) {
                 float cadence = intent.getFloatExtra(GaitAnalysisService.CADENCE, 0);
-                //gait = intent.getStringExtra(GaitAnalysisService.GAIT);
-
-
                 processCadence(cadence);
-                /*Log.d(TAG, String.format("%.1f Hz", cadence));
-                DatabaseReference newRef = cadenceReference.push();
-                newRef.setValue(cadence);*/
-                //text_gait.setText(gait);
 
-                /*if (gait != null && cadence > 0) {
-                    gaits.add(0, gait);
-                    gaitListAdapter.notifyDataSetChanged();
-                }*/
             } else if (GaitAnalysisService.GAITLIB_STATUS_UPDATE.equals(action)) {
                 String message = intent
                         .getStringExtra(GaitAnalysisService.GAITLIB_STATUS_MESSAGE);
@@ -257,11 +246,6 @@ public class GaitAnalysisService extends Service {
             secondCount++;
             return;
         }
-            // return without doing anything if X seconds have not passed
-            /*while(secondCount < secondThreshold) {
-                secondCount++;
-                return;
-            }*/
 
         if (secondCount == secondThreshold) {
             secondCount = 0;
