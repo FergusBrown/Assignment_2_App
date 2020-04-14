@@ -11,7 +11,7 @@ import java.util.HashMap;
 public class Constants {
 
 //Location
-    public static final String GEOFENCE_ID = "Patient Home";
+    public static final String GEOFENCE_ID = "home";
     public static final float GEOFENCE_RADIUS_IN_METERS = 100;
 
     /**

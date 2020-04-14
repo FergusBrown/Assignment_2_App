@@ -82,7 +82,7 @@ public class GeofenceRegistrationService extends IntentService {
     private void sendMessage(String geofenceTransitionDetails) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-        String messageToSend = "Your patient, " + prefs.getString("Patient Name", "") + ",has " + geofenceTransitionDetails + ".";
+        String messageToSend = "Your patient, " + prefs.getString("Patient Name", "") + ", has " + geofenceTransitionDetails + ".";
         String number = prefs.getString("Carer Phone", "0000");
 
         SmsManager sms = SmsManager.getDefault();
