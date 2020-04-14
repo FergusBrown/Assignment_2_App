@@ -7,8 +7,8 @@ import com.github.mikephil.charting.data.ChartData;
 
 /**
  * Base class of the Chart ListView items
- * @author philipp
- *
+ * @author philipp (MPCHART)
+ * Adapted by Fergus Brown
  */
 @SuppressWarnings("unused")
 public abstract class ChartItem {

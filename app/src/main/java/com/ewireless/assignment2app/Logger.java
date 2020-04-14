@@ -4,6 +4,11 @@ package com.ewireless.assignment2app;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class used for logging gait and cadence
+ * @author Mike Wi (GaitLib)
+ * adapted by Fergus Brown
+ */
 public class Logger {
 
     private List<Long> timeStamps = new ArrayList<Long>();

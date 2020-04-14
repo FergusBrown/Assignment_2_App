@@ -17,6 +17,13 @@ import android.widget.Toast;
 
 import androidx.preference.PreferenceManager;
 
+/**
+ * Background service used to detect and register falls.
+ * Falls are detected using device accelerometer, gravity and magnetometer values
+ * based on device movement and orientation.
+ * Once a fall is registered an SMS text is sent to the stored phone number.
+ * @author Roland Podlucki
+ */
 public class FallDetectionService extends Service implements SensorEventListener {
     // Tag for log prints
     private final static String TAG = "FallDetectionService";
@@ -31,9 +38,6 @@ public class FallDetectionService extends Service implements SensorEventListener
     float[] magnetometerValues = new float[3];
     double aThreshold;
     double gThreshold;
-    double mThreshold;
-    double aMax;
-    double gMax;
     double aMax0;
     double aMax2;
     double tMin1 = 90;
@@ -42,8 +46,6 @@ public class FallDetectionService extends Service implements SensorEventListener
     double theta2;
     double degree;
     long time;
-    double ayMin;
-    double ayMax;
     int f;
 
     private boolean isCountRunning = false;

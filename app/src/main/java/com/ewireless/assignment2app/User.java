@@ -1,5 +1,9 @@
 package com.ewireless.assignment2app;
 
+/**
+ * User type to store in the database
+ * @author Fergus Brown
+ */
 public class User {
 
     // variables must be public for firebase

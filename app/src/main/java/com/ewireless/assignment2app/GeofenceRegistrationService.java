@@ -26,7 +26,12 @@ import com.google.android.gms.location.GeofencingEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * Background service which creates a geofenced area (a radius around a specific location which are set upon registration)
+ * When the device leaves or enters this area a transition is registered
+ * upon register id the device has exited the geofence area then an SMS text is sent
+ * @author Tianyi Zhang
+ */
 public class GeofenceRegistrationService extends IntentService {
 
     private static final String TAG = "GeoIntentService";

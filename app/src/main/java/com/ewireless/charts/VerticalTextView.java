@@ -7,6 +7,11 @@ import android.util.AttributeSet;
 import android.view.Gravity;
 import android.widget.TextView;
 
+/**
+ * Class to create vertical aligned textboxes
+ * @author unknown
+ * Adapted by Fergus Brown
+ */
 public class VerticalTextView extends androidx.appcompat.widget.AppCompatTextView {
     final boolean topDown;
 

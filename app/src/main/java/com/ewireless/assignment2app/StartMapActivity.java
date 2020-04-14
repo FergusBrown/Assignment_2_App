@@ -26,6 +26,10 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * Activity to open Google maps and places a marker on the chosen postcode
+ * @author Jialin Fan
+ */
 public class StartMapActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;

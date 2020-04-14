@@ -18,6 +18,11 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.ChartData;
 import com.github.mikephil.charting.data.LineData;
 
+/**
+ * Extension of the base Chart class to handle line charts
+ * @author philipp (MPCHART)
+ * Adapted by Fergus Brown
+ */
 public class LineChartItem extends ChartItem {
 
     private final Typeface mTf;
@@ -67,7 +72,6 @@ public class LineChartItem extends ChartItem {
         }
 
         // apply styling
-        // holder.chart.setValueTypeface(mTf);
         holder.chart.getDescription().setEnabled(false);
         holder.chart.setDrawGridBackground(false);
 
@@ -76,26 +80,24 @@ public class LineChartItem extends ChartItem {
         xAxis.setTypeface(mTf);
         xAxis.setDrawGridLines(false);
         xAxis.setDrawAxisLine(true);
-        //xAxis.setLabelCount(maxTicks);
         xAxis.setAxisMinimum(1f);
         xAxis.setAxisMaximum(maxTicks);
 
         YAxis leftAxis = holder.chart.getAxisLeft();
         leftAxis.setTypeface(mTf);
         leftAxis.setLabelCount(5, false);
-        leftAxis.setAxisMinimum(0f); // this replaces setStartAtZero(true)
+        leftAxis.setAxisMinimum(0f);
 
         YAxis rightAxis = holder.chart.getAxisRight();
         rightAxis.setTypeface(mTf);
         rightAxis.setLabelCount(5, false);
         rightAxis.setDrawGridLines(false);
-        rightAxis.setAxisMinimum(0f); // this replaces setStartAtZero(true)
+        rightAxis.setAxisMinimum(0f);
 
         // set data
         holder.chart.setData((LineData) mChartData);
 
         // do not forget to refresh the chart
-        // holder.chart.invalidate();
         holder.chart.animateX(750);
 
         return convertView;

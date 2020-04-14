@@ -26,11 +26,18 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+/**
+ * Activity which is launched the first time the app is opened.
+ * This is a form which prompts the user to enter carer and patient details.
+ * These details are saved to internal preferences and uploaded to the database
+ * with a unique key to identify the user.
+ * To register a geofence location, device location is monitored.
+ * @author Fergus Brown
+ */
 public class FirstLaunch extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
 
     // Tag for log prints
     private final static String TAG = "FirstLaunch";
-
 
     // google maps for location
     private GoogleMap googleMap;
@@ -129,23 +136,9 @@ public class FirstLaunch extends AppCompatActivity implements GoogleApiClient.Co
         // flush the buffer
         editor.apply();
 
-
-
         // Activity Finished
         finish();
     }
-
-
-    /********** Code for getting and setting double preferences
-    Editor putDouble(final Editor edit, final String key, final double value) {
-        return edit.putLong(key, Double.doubleToRawLongBits(value));
-    }
-
-    double getDouble(final SharedPreferences prefs, final String key, final double defaultValue) {
-        return Double.longBitsToDouble(prefs.getLong(key, Double.doubleToLongBits(defaultValue)));
-    }
-    */
-
 
     public void closeDialog(View view) {
         final Dialog dialog = new Dialog(this);

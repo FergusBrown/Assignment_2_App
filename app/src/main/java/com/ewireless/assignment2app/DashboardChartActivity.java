@@ -1,16 +1,10 @@
 package com.ewireless.assignment2app;
 
-import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.preference.PreferenceManager;
-
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,8 +13,13 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
+
+import com.ewireless.charts.BarChartItem;
 import com.ewireless.charts.ChartItem;
 import com.ewireless.charts.LineChartItem;
 import com.github.mikephil.charting.data.BarData;
@@ -29,13 +28,8 @@ import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.data.PieData;
-import com.github.mikephil.charting.data.PieDataSet;
-import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
-import java.text.DateFormatSymbols;
-import com.ewireless.charts.BarChartItem;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -44,10 +38,8 @@ import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
 import com.whiteelephant.monthpicker.MonthPickerDialog;
 
+import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.YearMonth;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -59,6 +51,15 @@ import java.util.regex.Pattern;
 
 import static java.lang.Integer.parseInt;
 
+/**
+ * Using the MPCHART library two graphs displaying activity and cadence data for a given month
+ * are created. Using regex the appropriate data is extracted from the database.
+ * This data is used to to create a dataset for a bar and line chart.
+ * The month and year which the data is acquired from can be changed using a choose month button.
+ * This button uses the MonthAndYearPicker library to create a month and year selection item.
+ * Upon month and year selection the charts are redrawn with the new data.
+ * @author Fergus Brown
+ */
 public class DashboardChartActivity extends AppCompatActivity {
 
     // Tag for log prints
@@ -76,8 +77,7 @@ public class DashboardChartActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_listview_chart);
 
-        // add moneth picker
-        //chooseMonthOnly();
+        // add month picker
         setNormalPicker();
 
         int year = parseInt(new SimpleDateFormat("yyyy", Locale.UK).format(new Date()));

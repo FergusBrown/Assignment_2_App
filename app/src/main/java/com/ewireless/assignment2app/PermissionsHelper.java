@@ -2,19 +2,23 @@ package com.ewireless.assignment2app;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.util.Log;
+
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-
-import android.os.Environment;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
+/**
+ * Helper class to check and request permissions
+ * @author unknown
+ * adapted by Fergus Brown
+ */
 public class PermissionsHelper {
 
     private static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 100; // any code you want.

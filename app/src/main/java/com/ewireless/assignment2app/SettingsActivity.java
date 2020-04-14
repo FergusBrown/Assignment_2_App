@@ -2,26 +2,24 @@ package com.ewireless.assignment2app;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.provider.Contacts;
 import android.text.InputType;
-import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.EditTextPreference;
-import androidx.preference.Preference;
-import androidx.preference.PreferenceFragment;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceManager;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.Map;
-
+/**
+ * Based on root_preferences.xml, this allows the user to change carer and patient details.
+ * Once this activity is exited (specifically on pause) the changed details are uploaded to the database.
+ * @author Fergus Brown
+ */
 public class SettingsActivity extends AppCompatActivity {
 
     @Override

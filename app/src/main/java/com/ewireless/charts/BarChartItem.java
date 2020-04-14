@@ -18,7 +18,11 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.ChartData;
 
-// handles the formatting for the barchart
+/**
+ * Extension of the base Chart class to handle bar charts
+ * @author philipp (MPCHART)
+ * Adapted by Fergus Brown
+ */
 public class BarChartItem extends ChartItem {
 
     private final Typeface mTf;

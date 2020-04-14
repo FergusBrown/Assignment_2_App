@@ -4,7 +4,10 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.util.HashMap;
 
-// Class for constants throughout apps
+/**
+ * Stores constants for geofencing
+ * @author Tianyi Zhang
+ */
 public class Constants {
 
 //Location

@@ -44,6 +44,12 @@ import java.util.Locale;
 
 import static weka.core.mathematicalexpression.sym.error;
 
+/**
+ * Background service which logs stride gait and cadence using GaitLib
+ * Once logged the cadence is uploaded to the database under the specific user's key with an
+ * appropriate timestamp.
+ * @author Fergus Brown
+ */
 public class GaitAnalysisService extends Service {
 
     // Database reference initialisation
@@ -51,18 +57,13 @@ public class GaitAnalysisService extends Service {
 
     private DatabaseReference mDatabaseReference = mDatabase.getReference().child("Users");
 
-
     // Tag for log prints
     private final static String TAG = "GaitAnalysisService";
-
-    //public float cadence;
 
     // broadcast receiver for gait analysis
     private final GaitAnalysisServiceReceiver receiver = new GaitAnalysisServiceReceiver();
 
-    /******************** End of new definitions added ************************/
-
-
+    // GaitLib parameters
     public static final String GAIT_UPDATE = "spin.gaitlib.GaitAnalysisService.GAIT_UPDATE";
     public static final String CADENCE = "spin.gaitlib.GaitAnalysisService.CADENCE";
     public static final String GAIT = "spin.gaitlib.GaitAnalysisService.GAIT";
@@ -133,16 +134,12 @@ public class GaitAnalysisService extends Service {
         // windowSize is the windows used for analysis, sampling interval is the number of times the system analyses and outputs the current cadence.
         mGaitAnalysis.startGaitAnalysis(2000, 1000);
 
-        /*********** New onCreate content begin *********************/
-
         IntentFilter gaitUpdateFilter = new IntentFilter(
                 GaitAnalysisService.GAIT_UPDATE);
         registerReceiver(receiver, gaitUpdateFilter);
         IntentFilter gaitLibStatusUpdateFilter = new IntentFilter(
                 GaitAnalysisService.GAITLIB_STATUS_UPDATE);
         registerReceiver(receiver, gaitLibStatusUpdateFilter);
-
-        /********* New onCreate content end ******************/
 
         super.onCreate();
     }
@@ -168,11 +165,6 @@ public class GaitAnalysisService extends Service {
         SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         sensorManager.unregisterListener(mGaitAnalysis.getSignalListener());
     }
-
-
-
-
-    /************** New methods *****************/
 
 
     public class GaitAnalysisServiceReceiver extends BroadcastReceiver {
@@ -256,7 +248,7 @@ public class GaitAnalysisService extends Service {
                 cadenceData.remove(lastIndex);
             }
 
-            // set timestamp calue to the list of cadence values
+            // set timestamp value to the list of cadence values
             timeRef.setValue(cadenceData);
             // clear list
             cadenceData.clear();
@@ -286,9 +278,6 @@ public class GaitAnalysisService extends Service {
 
         return;
     }
-
-    /*********** New methods end *****************/
-
 
     @Override
     public IBinder onBind(Intent arg0) {
