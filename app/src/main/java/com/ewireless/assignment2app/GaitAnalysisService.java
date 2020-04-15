@@ -239,11 +239,12 @@ public class GaitAnalysisService extends Service {
             return;
         }
 
+
         if (secondCount == secondThreshold) {
             secondCount = 0;
             isWalking = false;
             // erase last X instances
-            for (int i = 0; i < secondThreshold; i++) {
+            for (int i = 0; i <= secondThreshold; i++) {
                 int lastIndex = cadenceData.size()-1;
                 cadenceData.remove(lastIndex);
             }
