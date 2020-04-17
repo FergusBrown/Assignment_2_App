@@ -13,18 +13,11 @@ import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.util.Log;
-import android.widget.TextView;
-import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import org.spin.gaitlib.GaitAnalysis;
 import org.spin.gaitlib.core.GaitData;
@@ -34,15 +27,9 @@ import org.spin.gaitlib.gait.IClassifierModelLoadingListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Locale;
-
-import static weka.core.mathematicalexpression.sym.error;
 
 /**
  * Background service which logs stride gait and cadence using GaitLib
@@ -52,9 +39,10 @@ import static weka.core.mathematicalexpression.sym.error;
  */
 public class GaitAnalysisService extends Service {
 
-    // Database reference initialisation
+    // Create Firebase database object
     FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
 
+    // Create database reference pointing to users
     private DatabaseReference mDatabaseReference = mDatabase.getReference().child("Users");
 
     // Tag for log prints
@@ -71,16 +59,18 @@ public class GaitAnalysisService extends Service {
     public static final String GAITLIB_STATUS_UPDATE = "spin.gaitlib.GaitAnalysisService.GAITLIB_STATUS_UPDATE";
     public static final String GAITLIB_STATUS_MESSAGE = "spin.gaitlib.GaitAnalysisService.GAITLIB_STATUS_MESSAGE";
 
-
-
     private WakeLock wakeLock;
 
+    // create gait analysis object
     private GaitAnalysis mGaitAnalysis = null;
-
+    // create logger object
     private Logger logger = null;
 
+    // Method run on service creation
     @Override
     public void onCreate() {
+
+        // use wake_lock for power management
         PowerManager mgr = (PowerManager) getSystemService(Context.POWER_SERVICE);
         int WAKE_LOCK = PowerManager.SCREEN_DIM_WAKE_LOCK
                 | PowerManager.ACQUIRE_CAUSES_WAKEUP
@@ -90,6 +80,8 @@ public class GaitAnalysisService extends Service {
         mGaitAnalysis = new GaitAnalysis();
         logger = new Logger();
         registerSensorListeners();
+
+        // Register IGaitUpdateListener to log gait and cadence data
         mGaitAnalysis.registerGaitUpdateListener(new IGaitUpdateListener() {
 
             public void onGaitUpdated(GaitData data) {
@@ -112,6 +104,7 @@ public class GaitAnalysisService extends Service {
             }
         });
 
+        // loads model for gait classification (not working in this version)
         mGaitAnalysis
                 .addGaitClassifierModelLoadingListener(new IClassifierModelLoadingListener() {
 
@@ -144,6 +137,7 @@ public class GaitAnalysisService extends Service {
         super.onCreate();
     }
 
+    // when service destroyed stop gait analysis
     @Override
     public void onDestroy() {
         wakeLock.release();
@@ -154,6 +148,7 @@ public class GaitAnalysisService extends Service {
         super.onDestroy();
     }
 
+    // register accelerometer listener for analysis
     private void registerSensorListeners() {
         SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         sensorManager.registerListener(mGaitAnalysis.getSignalListener(),
@@ -161,14 +156,16 @@ public class GaitAnalysisService extends Service {
                 SensorManager.SENSOR_DELAY_FASTEST);
     }
 
+    // unregister accelerometer listener
     private void unregisterSensorListeners() {
         SensorManager sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         sensorManager.unregisterListener(mGaitAnalysis.getSignalListener());
     }
 
-
+    // Upon intent broadcast from IGaitUpdateListener
     public class GaitAnalysisServiceReceiver extends BroadcastReceiver {
 
+        // trigger on intent broadcast
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
@@ -176,6 +173,7 @@ public class GaitAnalysisService extends Service {
                 return;
             }
 
+            // process the new cadence data
             if (GaitAnalysisService.GAIT_UPDATE.equals(action)) {
                 float cadence = intent.getFloatExtra(GaitAnalysisService.CADENCE, 0);
                 processCadence(cadence);
@@ -190,17 +188,19 @@ public class GaitAnalysisService extends Service {
 
     }
 
+    // variable used to count for walk start and end
     private int secondCount = 0;
+
+    // boolean which indicates whether user is walking or not
     private boolean isWalking = false;
     // cadence threshold frequency for detecting a walk
     final private double cadenceThreshold = 0.4;
+    // second threshold to indicate start or end of walk
     final private int secondThreshold = 5;
 
+    // handle the cadence data based on whether the user is walking
     private void processCadence(float cadence) {
-
-
-        // If walking then start uploading to database
-        /// Otherwise
+        // Handle walking accordingly
         if(isWalking) {
             handleWalking(cadence);
         } else {
@@ -208,6 +208,7 @@ public class GaitAnalysisService extends Service {
         }
     }
 
+    // Strings to create database children names
     private String year;
     private  String month;
     private  String day;
@@ -216,11 +217,14 @@ public class GaitAnalysisService extends Service {
     // list for storing data, key for seconds, float for cadence value
     private List<Float> cadenceData = new ArrayList<Float>();
 
+    // if the user is walking the add to cadence Data array and detect whether walk has ended
     private void handleWalking(float cadence) {
 
+        // open preferences to get unique use key
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         String userKey = prefs.getString("User ID", null);
 
+        // create database child under the current date
         DatabaseReference timeRef = mDatabaseReference.child(userKey).child("Cadence Data")
                 .child("YEAR: " + year)
                 .child("MONTH: " + month)
@@ -230,7 +234,8 @@ public class GaitAnalysisService extends Service {
         // Add data to list
         cadenceData.add(cadence);
 
-        // return if not at X and reset if less than threshold
+        // return and reset if greater than threshold
+        // if less than threshold then increment counter
         if(cadence >= cadenceThreshold) {
             secondCount = 0;
             return;
@@ -240,6 +245,7 @@ public class GaitAnalysisService extends Service {
         }
 
 
+        // if at second threshold end the walk and upload cadenceData to database
         if (secondCount == secondThreshold) {
             secondCount = 0;
             isWalking = false;

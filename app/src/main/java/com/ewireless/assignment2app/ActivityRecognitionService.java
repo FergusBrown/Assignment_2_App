@@ -10,23 +10,17 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.NotificationCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.preference.PreferenceManager;
 
-import com.ewireless.assignment2app.BuildConfig;
-import com.ewireless.assignment2app.MainActivity;
 import com.google.android.gms.location.ActivityRecognition;
 import com.google.android.gms.location.ActivityTransition;
 import com.google.android.gms.location.ActivityTransitionEvent;
@@ -53,9 +47,10 @@ import java.util.Locale;
  */
 public class ActivityRecognitionService extends Service {
 
-    // Database reference initialisation
+    // Firebase database object initialisation
     FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
 
+    // Create database reference pointing to users
     private DatabaseReference mDatabaseReference = mDatabase.getReference().child("Users");
 
     /***********Begin definitions for Activity API************/
@@ -78,10 +73,9 @@ public class ActivityRecognitionService extends Service {
 
     /***********End definitions for Activity API************/
 
+    // called when activity created
     @Override
     public void onCreate() {
-
-
         // Activity tracker is initially turned off
         activityTrackingEnabled = false;
 
@@ -133,16 +127,16 @@ public class ActivityRecognitionService extends Service {
         // The receiver listens for the PendingIntent above that is triggered by the system when an
         // activity transition occurs.
         mTransitionsReceiver = new TransitionsReceiver();
-        //LocalBroadcastManager.getInstance(this).registerReceiver(
         registerReceiver(
                 mTransitionsReceiver,
                 new IntentFilter(TRANSITIONS_RECEIVER_ACTION)
         );
 
+        // Log used for debug
         Log.d(TAG, "App initialized.");
 
+        // register callbacks for activity transition
         enableActivityTransitions();
-
 
         super.onCreate();
     }
@@ -166,6 +160,7 @@ public class ActivityRecognitionService extends Service {
     public static final String ANDROID_CHANNEL_NAME = "ANDROID CHANNEL";
     public static final String ANDROID_CHANNEL_DESCRIP = "Activity Service";
 
+    // create a notification if API 26+ to run in background
     private void createNotificationChannel() {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
@@ -180,13 +175,15 @@ public class ActivityRecognitionService extends Service {
         }
     }
 
-    // Provide info about app when not in use
+    // Provide info about app when not in use - this forces the app to run in background and not be
+    // destroyed in the event the phone needs more memory
     private void startForeground() {
         Intent notificationIntent = new Intent(this, MainActivity.class);
 
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
                 notificationIntent, 0);
 
+        // Create the foreground notification using the notification builder
         startForeground(NOTIF_ID, new NotificationCompat.Builder(this,
                 NOTIF_CHANNEL_ID) // don't forget create a notification channel first
                 .setOngoing(true)
@@ -217,6 +214,7 @@ public class ActivityRecognitionService extends Service {
         }
     }
 
+    // convert activity int to string
     private static String toTransitionType(int transitionType) {
         switch (transitionType) {
             case ActivityTransition.ACTIVITY_TRANSITION_ENTER:
@@ -255,7 +253,7 @@ public class ActivityRecognitionService extends Service {
         Log.d(TAG, "enableActivityTransitions()");
 
 
-        // TODO: Create request and listen for activity changes.
+        // Create request and listen for activity changes.
         ActivityTransitionRequest request = new ActivityTransitionRequest(activityTransitionList);
 
         // Register for Transitions Updates.

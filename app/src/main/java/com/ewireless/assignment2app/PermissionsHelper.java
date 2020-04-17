@@ -23,6 +23,7 @@ public class PermissionsHelper {
 
     private static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 100; // any code you want.
 
+    // checks permission and if not granted requests it
     public void checkAndRequestPermissions(Activity activity, String... permissions) {
         List<String> listPermissionsNeeded = new ArrayList<>();
         for (String permission : permissions) {
@@ -35,6 +36,7 @@ public class PermissionsHelper {
         }
     }
 
+    // called upon the callback triggered by requesting a permission
     public void onRequestPermissionsResult(Activity activity, int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
             case REQUEST_ID_MULTIPLE_PERMISSIONS: {

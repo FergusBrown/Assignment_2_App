@@ -65,9 +65,10 @@ public class DashboardChartActivity extends AppCompatActivity {
     // Tag for log prints
     private final static String TAG = "DashboardChartActivity";
 
-    // Database reference initialisation
+    // Create firebase database object
     FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
 
+    // create database reference pointing to users
     private DatabaseReference mDatabaseReference = mDatabase.getReference().child("Users");
 
     @Override
@@ -91,6 +92,7 @@ public class DashboardChartActivity extends AppCompatActivity {
         }
     }
 
+    // Method used to handle month and year selection upon pressing "choose month" button
     private void setNormalPicker() {
         setContentView(R.layout.activity_listview_chart);
         final Calendar today = Calendar.getInstance();
@@ -140,14 +142,18 @@ public class DashboardChartActivity extends AppCompatActivity {
     // max days in a month is 31
     float[] cadenceAverages = new float[31];
 
+    // creates and adds line and bar chart to the list view
     private void generateGraph(int year, int month) {
         // clear activities and cadence data
         Arrays.fill(activities,0);
         Arrays.fill(cadenceAverages,0f);
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         String userKey = prefs.getString("User ID", null);
-        
+
+        // create a databser reference pointing to the user's unique key
         DatabaseReference userRoot = mDatabaseReference.child(userKey);
+
+        /** Obselete references **/
         //DatabaseReference activityRoot = userRoot.child("Activity Data").child("YEAR: " + year).child("MONTH: " + String.format("%02d", month));
         //DatabaseReference cadenceRoot = userRoot.child("Cadence Data").child("YEAR: " + year).child("MONTH: " + String.format("%02d", month));
 
@@ -190,6 +196,7 @@ public class DashboardChartActivity extends AppCompatActivity {
 
     }
 
+    // creates a dataset suitable for a LineChartItem object
     private LineData createLineData(int year, int month) {
         ArrayList<Entry> lineEntries = new ArrayList<>();
 
@@ -201,6 +208,7 @@ public class DashboardChartActivity extends AppCompatActivity {
         calendar.set(Calendar.MONTH, month - 1);
         int numDays = calendar.getActualMaximum(Calendar.DATE);
 
+        // only enter data up to the number of days in the selected month
         for (int i = 0; i < numDays; i++) {
             lineEntries.add(new BarEntry(i + 1, cadenceAverages[i]));
         }
@@ -211,30 +219,34 @@ public class DashboardChartActivity extends AppCompatActivity {
         d1.setHighLightColor(Color.rgb(244, 117, 117));
         d1.setDrawValues(false);
 
-
         ArrayList<ILineDataSet> sets = new ArrayList<>();
-        sets.add(d1);;
+        sets.add(d1);
 
+        // return dataset for a linechart
         return new LineData(sets);
 
     }
 
     GenericTypeIndicator<List<Float>> newType = new GenericTypeIndicator<List<Float>>() {};
 
+    // Uses regular expressions to obtain the appropriate cadence data from the database snapshot
     private void getCadenceData(DataSnapshot snapshot, String childName) {
-        //Map day = snapshot.getValue(Map.class);
+        // int to store the day number
         int dayNum;
 
+        //regex  pattern to obtain day number
         Pattern day_pattern = Pattern.compile("(\\d+)");
 
         Matcher dayMatcher = day_pattern.matcher(childName);
 
+        // If a match is found then assign the day number to dayNum
         if(dayMatcher.find()) {
             dayNum = parseInt(dayMatcher.group(1));
         } else {
             return;
         }
 
+        // List to save average cadence associated with each timestamp
         List<Float> snapAverage = new ArrayList<Float>();
 
         // find average of all cadence values stored for this day
@@ -246,13 +258,15 @@ public class DashboardChartActivity extends AppCompatActivity {
             snapAverage.add(getAverage(cadenceData));
         }
 
-        // starts at index 0
+        // starts at index 0, find average of cadence data under all timestamps and add to
+        // cadenceAverages
         cadenceAverages[dayNum-1] = getAverage(snapAverage);
 
         return;
 
     }
 
+    // returns the average of a list of floats
     private Float getAverage(List<Float> cadenceData) {
         Float sum = 0f;
         if(!cadenceData.isEmpty()) {
@@ -265,6 +279,7 @@ public class DashboardChartActivity extends AppCompatActivity {
     }
 
 
+    // adds a count to the appropriate index in activities array
     private void getActivityData(DataSnapshot snapshot2) {
         String user = snapshot2.getValue(String.class);
         // get activity type
@@ -275,18 +290,23 @@ public class DashboardChartActivity extends AppCompatActivity {
         }
     }
 
+    // using regex extract the activity name and return the associated int
     private int determineActivity(String user) {
+        // pattern to extract activity type
         Pattern activity_pattern = Pattern.compile("(\\s\\w+)");
+        // pattern to match with a string identifying the entering of an activity
         Pattern transition_pattern = Pattern.compile("ENTER");
 
+        // Match the patterns with the user string
         Matcher transitionMatcher = transition_pattern.matcher(user);
         Matcher activityMatcher = activity_pattern.matcher(user);
 
+        // if no match return
         if(!transitionMatcher.find()) {
             return -1;
         }
 
-
+        // based on the activity string return the appropriate int
         if (activityMatcher.find()) {
             String activityType = activityMatcher.group(1);
 
@@ -316,6 +336,7 @@ public class DashboardChartActivity extends AppCompatActivity {
 
     }
 
+    // creates dataset for BarChartItem object
     private BarData createBarData(int month) {
         ArrayList<BarEntry> barEntries = new ArrayList<>();
 
@@ -335,6 +356,7 @@ public class DashboardChartActivity extends AppCompatActivity {
     }
 
 
+    // creates LineChartItem and BarChartItem objects to add to the list view
     private void drawGraphs(int year, int month) {
 
         // create chart data
@@ -346,14 +368,11 @@ public class DashboardChartActivity extends AppCompatActivity {
 
         ArrayList<ChartItem> list = new ArrayList<>();
 
-
-
-
+        // define X axis ticks for bar chart
         final String[] activityStrings = {"Walking", "Running", "In Vehicle", "On Bicycle"};
         final String barTitle = "Patient Activity Count";
+        // define BarChartItem object
         BarChartItem barChart = new BarChartItem(barData, activityStrings, barTitle, getApplicationContext());
-
-
 
         // Find number of days in this month
         Calendar calendar = Calendar.getInstance();

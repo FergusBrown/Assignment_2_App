@@ -22,9 +22,11 @@ import com.google.firebase.database.FirebaseDatabase;
  */
 public class SettingsActivity extends AppCompatActivity {
 
+    // called on creation of the activity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // set layout based on xml
         setContentView(R.layout.settings_activity);
         getSupportFragmentManager()
                 .beginTransaction()
@@ -35,16 +37,20 @@ public class SettingsActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
     }
 
+    // create Firebase database object
     FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
+
+    // create database reference
     private DatabaseReference mDatabaseReference = mDatabase.getReference();
 
     // update the appropriate keys in the database when leaving settings page
     @Override
     protected void onPause() {
         super.onPause();
+
+        // acquire all the values set locally in preferences
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         String userKey = prefs.getString("User ID", null);
         String patientName = prefs.getString("Patient Name", null);
@@ -56,17 +62,20 @@ public class SettingsActivity extends AppCompatActivity {
         int geofenceRadius = prefs.getInt("Geofence Radius", 50);
         double latitude = Double.longBitsToDouble(prefs.getLong("Latitude", 0));
         double longitude = Double.longBitsToDouble(prefs.getLong("Longitude", 0));
-        User user = new User(userKey, patientName, carerName, carerPhone, carerEmail, postCode, geofenceRadius, latitude, longitude);
 
+        // upload new user data to database
+        User user = new User(userKey, patientName, carerName, carerPhone, carerEmail, postCode, geofenceRadius, latitude, longitude);
         mDatabaseReference.child("Users").child(userKey).child("Details").setValue(user);
 
 
     }
 
+    // settings fragment for changing settings
     public static class SettingsFragment extends PreferenceFragmentCompat {
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
 
+            // preferences items defined in root_preferences.xml
             setPreferencesFromResource(R.xml.root_preferences, rootKey);
             EditTextPreference carerPhone = findPreference("Carer Phone");
 

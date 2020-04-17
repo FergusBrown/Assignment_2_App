@@ -5,7 +5,7 @@ import com.google.android.gms.maps.model.LatLng;
 import java.util.HashMap;
 
 /**
- * Stores constants for geofencing
+ * Stores some constants used for geofencing
  * @author Tianyi Zhang
  */
 public class Constants {

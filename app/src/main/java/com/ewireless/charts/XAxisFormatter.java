@@ -20,8 +20,8 @@ public class XAxisFormatter extends ValueFormatter {
 
     @NotNull
     public String getAxisLabel(float value, @Nullable AxisBase axis) {
-        //return xTicks[(int) value];
 
+        // only return xticks value if they are an int
         if (value >= 0) {
             if (value <= xTicks.length - 1) {
                return xTicks[(int) value];

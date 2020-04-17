@@ -49,15 +49,19 @@ public class FirstLaunch extends AppCompatActivity implements GoogleApiClient.Co
     EditText carerPhoneText;
     EditText carerEmailText;
     EditText postCodeText;
-
     TextView radiusLabel;
+
+    // int to store geofence radius
     private int radius;
 
+    // method run when the activity is created
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // set layout defined by xml file
         setContentView(R.layout.activity_first_launch);
 
+        // Bind UI elements
         patientNameText = (EditText)findViewById(R.id.patientName);
         carerNameText = (EditText)findViewById(R.id.carerName);
         carerEmailText = (EditText)findViewById(R.id.carerEmail);
@@ -69,6 +73,7 @@ public class FirstLaunch extends AppCompatActivity implements GoogleApiClient.Co
         SeekBar seekBar = findViewById(R.id.radiusSlider);
         seekBar.setOnSeekBarChangeListener(seekBarChangeListener);
 
+        // radius is set by seekbar value
         radius = seekBar.getProgress();
         radiusLabel = findViewById(R.id.radiusText);
         radiusLabel.setText("Patient home radius: " + radius);
@@ -83,6 +88,7 @@ public class FirstLaunch extends AppCompatActivity implements GoogleApiClient.Co
         openDialog();
     }
 
+    // create welcome dialogue
     private void openDialog() {
         // Dialog to tell user to fill in details
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(FirstLaunch.this);
@@ -99,23 +105,29 @@ public class FirstLaunch extends AppCompatActivity implements GoogleApiClient.Co
         alert.show();
     }
 
+    // create Firebase database object
     FirebaseDatabase mDatabase = FirebaseDatabase.getInstance();
 
+    // create a database reference
     private DatabaseReference mDatabaseReference = mDatabase.getReference();
 
+    // Store preferences locally and upload data to database under a unique user key
     public void formComplete(View view) {
-        // create a unique user key
 
+        // create a unique user key
         String userKey = mDatabaseReference.child("Users").push().getKey();
 
+        // get values entered into the form
         String patientName = patientNameText.getText().toString();
         String carerName = carerNameText.getText().toString();
         String carerPhone = carerPhoneText.getText().toString();
         String carerEmail = carerEmailText.getText().toString();
         String postCode = postCodeText.getText().toString();
 
+        // create a new user object to upload to database
         User user = new User(userKey, patientName, carerName, carerPhone, carerEmail, postCode, radius, latitude, longitude);
 
+        // Upload the user details to the database
         mDatabaseReference.child("Users").child(userKey).child("Details").setValue(user);
 
         // Set EditTextValues to preferences
@@ -140,6 +152,7 @@ public class FirstLaunch extends AppCompatActivity implements GoogleApiClient.Co
         finish();
     }
 
+    // Close the welcome dialogue
     public void closeDialog(View view) {
         final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.welcome_dialog);
@@ -149,10 +162,12 @@ public class FirstLaunch extends AppCompatActivity implements GoogleApiClient.Co
     // Seekbar listener
     SeekBar.OnSeekBarChangeListener seekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
 
+        // run when slider value is changed
         @Override
         public void onProgressChanged(SeekBar seekBar, int value, boolean fromUser) {
             // updated continuously as the user slides the thumb
 
+            // update value of radius
             radius = value;
             radiusLabel.setText("Patient home radius: " + radius);
         }
@@ -175,10 +190,11 @@ public class FirstLaunch extends AppCompatActivity implements GoogleApiClient.Co
         getLocation();
     }
 
-
+    // variables to store lat and long
     double latitude;
     double longitude;
 
+    // get the location when changed -- used to get geofence location
     private void getLocation() {
         Log.d(TAG, "start location monitor");
         LocationRequest locationRequest = LocationRequest.create()
@@ -201,6 +217,7 @@ public class FirstLaunch extends AppCompatActivity implements GoogleApiClient.Co
             }
         }
 
+    // evaluate connection to API
     @Override
     public void onConnectionSuspended(int i) {
         Log.d(TAG, "Google Connection Suspended");
@@ -211,6 +228,7 @@ public class FirstLaunch extends AppCompatActivity implements GoogleApiClient.Co
         Log.e(TAG, "Connection Failed:" + connectionResult.getErrorMessage());
     }
 
+    // connect to location API on start
     @Override
     protected void onStart() {
         super.onStart();

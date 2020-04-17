@@ -47,21 +47,28 @@ public class StartMapActivity extends FragmentActivity implements OnMapReadyCall
         setContentView(R.layout.activity_start_map);
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         locationListener = new myLocationListener();
+
+        //judge the weather the gps open
         if(!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
             Toast.makeText(this,"Open GPS",Toast.LENGTH_LONG).show();
         }
+        // judge the android version weather > M , and then it will remind wether need to access location information
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
             }
         }
+        // judge the android version weather > M and weather allow the app use the online service
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{Manifest.permission.INTERNET}, 1);
             }
         }
+
+        // obtain the provider , provide information for manager
         bestProvider = locationManager.getBestProvider(getCriteria(), true);
         locationManager.requestLocationUpdates(bestProvider, 1000, 5, locationListener);
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -71,6 +78,7 @@ public class StartMapActivity extends FragmentActivity implements OnMapReadyCall
     @Override
     protected void onPause(){
         super.onPause();
+        // register location listener
         locationManager.removeUpdates(locationListener);
     }
 
@@ -79,6 +87,7 @@ public class StartMapActivity extends FragmentActivity implements OnMapReadyCall
         super.onResume();
         setUpMapIfNeeded();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            //Reopen the app, reacquire location information and network permissions
             if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 // TODO: Consider calling
                 //    Activity#requestPermissions
@@ -100,11 +109,13 @@ public class StartMapActivity extends FragmentActivity implements OnMapReadyCall
 
     class myLocationListener implements LocationListener {
 
+        //if location changed , access lat and long
         @Override
         public void onLocationChanged(Location location) {
             if (location != null) {
                 tLat = location.getLatitude();
                 tLong = location.getLongitude();
+                // update map again
                 updateMap();
             }
         }
@@ -125,11 +136,16 @@ public class StartMapActivity extends FragmentActivity implements OnMapReadyCall
         }
     }
 
+    // update map and create lat and long object
     private void updateMap() {
         LatLng latLng = new LatLng(tLat, tLong);
         mMap.addMarker(new MarkerOptions().position(latLng).title("New location"));
+
+        // control the zoom of map , v:13 means zoom size
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,13));
     }
+
+    //The current app switches the background and then opens, the role of reloading
     private void setUpMapIfNeeded() {
         if(mMap == null) {
             SupportMapFragment mapFragment = (SupportMapFragment)getSupportFragmentManager()
@@ -148,25 +164,39 @@ public class StartMapActivity extends FragmentActivity implements OnMapReadyCall
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
+
+        // show the map
         mMap = googleMap;
         mMap.getUiSettings().setZoomControlsEnabled(true);
         Intent intent = getIntent();
+
+        //according the package name to access location information
         String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
         List<Address> addressList = null;
         Geocoder geocoder = new Geocoder(this);
         try{
+            //Address into coordinates
             addressList = geocoder.getFromLocationName(message, 1);
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        // create lat and long
         Address address = addressList.get(0);
         homeLat = address.getLatitude();
         homeLnt = address.getLongitude();
-        // Add a marker in my home and move the camera
+
+        // Add a marker ---- home
         LatLng LatLngInput = new LatLng(address.getLatitude(),address.getLongitude());
         mMap.addMarker(new MarkerOptions().position(LatLngInput).title("My Home"));
+
+        // zoom of size
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLngInput,12));
+
+        // allow access location
         mMap.setMyLocationEnabled(true);
+
+        // map can change at any time
         mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
         mMap.getUiSettings().setCompassEnabled(true);
         mMap.getUiSettings().setRotateGesturesEnabled(true);
@@ -174,12 +204,19 @@ public class StartMapActivity extends FragmentActivity implements OnMapReadyCall
         mMap.getUiSettings().setTiltGesturesEnabled(true);
     }
 
+    // selecting a location provider
     private Criteria getCriteria() {
+
+        // create a criteria object
         Criteria criteria = new Criteria();
+
+        // settings does not require elevation data
         criteria.setAccuracy(Criteria.ACCURACY_FINE);
         criteria.setAltitudeRequired(false);
         criteria.setBearingRequired(false);
+        //set to allow produce cost
         criteria.setCostAllowed(true);
+        // request low power consumption
         criteria.setPowerRequirement(Criteria.POWER_LOW);
         return criteria;
     }

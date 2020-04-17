@@ -158,6 +158,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         return false;
     }
 
+    // called after onCreate
     @Override
     protected void onResume() {
         super.onResume();
@@ -242,11 +243,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     /*************** Begin methods for checking permissions *********************/
 
+    // handle permission requests
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         permissionsHelper.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
     }
 
+    // check whether device has allowed all appropriate permissions
     private boolean checkPermissions() {
 
         int activityPerm = ContextCompat.checkSelfPermission(this, Manifest.permission.ACTIVITY_RECOGNITION);
@@ -313,8 +316,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Log.e(TAG, "Connection Failed:" + connectionResult.getErrorMessage());
     }
-
-    // Non override methods below
 
     // starts geofencing service
     private void startGeofencing() {
