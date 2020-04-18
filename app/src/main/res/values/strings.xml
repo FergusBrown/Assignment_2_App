@@ -20,4 +20,6 @@
     <string name="dashboard_settings">Dashboard</string>
     <string name="title_dashboard">Carer Dashboard</string>
     <string name="month_picker">Choose Month</string>
+    <string name="title_alarm">Medication Alarm</string>
+    <string name="alarm_settings">Alarm</string>
 </resources>

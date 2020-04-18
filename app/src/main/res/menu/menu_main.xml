@@ -12,4 +12,9 @@
         android:orderInCategory="101"
         android:title="@string/dashboard_settings"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/alarm_settings"
+        android:orderInCategory="102"
+        android:title="@string/alarm_settings"
+        app:showAsAction="never" />
 </menu>
