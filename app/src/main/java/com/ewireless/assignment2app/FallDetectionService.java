@@ -19,7 +19,7 @@ import androidx.preference.PreferenceManager;
 
 /**
  * Background service used to detect and register falls.
- * Falls are detected using device accelerometer, gravity and magnetometer values
+ * Falls are detected using device accelerometer values
  * based on device movement and orientation.
  * Once a fall is registered an SMS text is sent to the stored phone number.
  * @author Roland Podlucki
