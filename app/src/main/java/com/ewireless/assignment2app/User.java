@@ -2,7 +2,7 @@ package com.ewireless.assignment2app;
 
 /**
  * User type to store in the database
- * @author Fergus Brown
+ * @author Fergus Brown s1525959
  */
 public class User {
 

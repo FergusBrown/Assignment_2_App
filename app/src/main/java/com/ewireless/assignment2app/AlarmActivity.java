@@ -17,7 +17,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 /**
- * @author Jialin Fan?
+ * @author Jialin Fan s1952282
  */
 public class AlarmActivity extends AppCompatActivity {
     public static int HOUR = 0;

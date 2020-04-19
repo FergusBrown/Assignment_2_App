@@ -17,7 +17,7 @@ import java.util.Map;
 /**
  * Helper class to check and request permissions
  * @author unknown
- * adapted by Fergus Brown
+ * adapted by Fergus Brown s1525959
  */
 public class PermissionsHelper {
 

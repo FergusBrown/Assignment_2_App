@@ -43,7 +43,7 @@ import java.util.Locale;
  * Using the Activity Recognition Transition API transitions to walking, running, in vehicle etc. are
  * registered. Once registered the transition is uploaded to the database with a timestamp of when
  * the transition occurred.
- * @author Fergus Brown
+ * @author Fergus Brown s1525959
  */
 public class ActivityRecognitionService extends Service {
 

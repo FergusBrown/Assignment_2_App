@@ -18,7 +18,7 @@ import com.google.firebase.database.FirebaseDatabase;
 /**
  * Based on root_preferences.xml, this allows the user to change carer and patient details.
  * Once this activity is exited (specifically on pause) the changed details are uploaded to the database.
- * @author Fergus Brown
+ * @author Fergus Brown s1525959
  */
 public class SettingsActivity extends AppCompatActivity {
 

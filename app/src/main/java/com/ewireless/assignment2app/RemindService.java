@@ -9,7 +9,7 @@ import android.os.IBinder;
 import androidx.annotation.Nullable;
 
 /**
- * @author Jialin Fan
+ * @author Jialin Fan s1952282
  */
 public class RemindService extends Service {
     int count = 0;

@@ -6,7 +6,7 @@ import java.util.HashMap;
 
 /**
  * Stores some constants used for geofencing
- * @author Tianyi Zhang
+ * @author Tianyi Zhang s1905225
  */
 public class Constants {
 

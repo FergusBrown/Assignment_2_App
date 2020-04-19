@@ -13,7 +13,7 @@ import com.blankj.utilcode.util.Utils;
 import com.ewireless.assignment2app.R;
 
 /**
- * @author Jialin Fan
+ * @author Jialin Fan s1952282
  */
 public class AlarmReceiver extends BroadcastReceiver {
     @Override

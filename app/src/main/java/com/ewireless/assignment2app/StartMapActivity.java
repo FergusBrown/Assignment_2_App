@@ -28,7 +28,7 @@ import java.util.List;
 
 /**
  * Activity to open Google maps and places a marker on the chosen postcode
- * @author Jialin Fan
+ * @author Jialin Fan s1952282
  */
 public class StartMapActivity extends FragmentActivity implements OnMapReadyCallback {
 

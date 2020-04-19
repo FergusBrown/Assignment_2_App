@@ -32,7 +32,7 @@ import com.google.firebase.database.FirebaseDatabase;
  * These details are saved to internal preferences and uploaded to the database
  * with a unique key to identify the user.
  * To register a geofence location, device location is monitored.
- * @author Fergus Brown
+ * @author Fergus Brown s1525959
  */
 public class FirstLaunch extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
 

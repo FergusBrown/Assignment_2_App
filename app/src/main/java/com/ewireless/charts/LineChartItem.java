@@ -21,7 +21,7 @@ import com.github.mikephil.charting.data.LineData;
 /**
  * Extension of the base Chart class to handle line charts
  * @author philipp (MPCHART)
- * Adapted by Fergus Brown
+ * Adapted by Fergus Brown s1525959
  */
 public class LineChartItem extends ChartItem {
 

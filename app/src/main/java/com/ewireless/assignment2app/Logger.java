@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Class used for logging gait and cadence
  * @author Mike Wi (GaitLib)
- * adapted by Fergus Brown
+ * adapted by Fergus Brown s1525959
  */
 public class Logger {
 

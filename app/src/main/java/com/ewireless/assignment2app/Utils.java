@@ -15,7 +15,7 @@ import java.util.Calendar;
 import static com.blankj.utilcode.util.ActivityUtils.startActivity;
 
 /**
- * @author Jialin Fan
+ * @author Jialin Fan s1952282
  */
 public class Utils {
     public static Long getSecondsNextEarlyMorning(int hour, int min) {

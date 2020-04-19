@@ -22,7 +22,7 @@ import androidx.preference.PreferenceManager;
  * Falls are detected using device accelerometer values
  * based on device movement and orientation.
  * Once a fall is registered an SMS text is sent to the stored phone number.
- * @author Roland Podlucki
+ * @author Roland Podlucki s1558723
  */
 public class FallDetectionService extends Service implements SensorEventListener {
     // Tag for log prints

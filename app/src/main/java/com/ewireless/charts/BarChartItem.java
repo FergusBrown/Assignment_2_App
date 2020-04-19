@@ -21,7 +21,7 @@ import com.github.mikephil.charting.data.ChartData;
 /**
  * Extension of the base Chart class to handle bar charts
  * @author philipp (MPCHART)
- * Adapted by Fergus Brown
+ * Adapted by Fergus Brown s1525959
  */
 public class BarChartItem extends ChartItem {
 

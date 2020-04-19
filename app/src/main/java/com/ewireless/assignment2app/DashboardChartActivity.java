@@ -58,7 +58,7 @@ import static java.lang.Integer.parseInt;
  * The month and year which the data is acquired from can be changed using a choose month button.
  * This button uses the MonthAndYearPicker library to create a month and year selection item.
  * Upon month and year selection the charts are redrawn with the new data.
- * @author Fergus Brown
+ * @author Fergus Brown s1525959
  */
 public class DashboardChartActivity extends AppCompatActivity {
 

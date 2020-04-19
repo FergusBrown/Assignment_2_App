@@ -52,7 +52,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
  * Main activity which serves as a home scree for the app
  * All services (geofence, actifity and fall detection) are initialised here
  * and the relevant buttons (such as go home) are handled in methods in this activity
- * @author Fergus Brown, Jialin Fan, Tianyi Zhang, Roland Podlucki
+ * @author Fergus Brown s1525959, Jialin Fan s1952282, Tianyi Zhang s1905225, Roland Podlucki s1558723
  */
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 

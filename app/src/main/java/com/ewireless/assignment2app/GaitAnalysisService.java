@@ -35,7 +35,7 @@ import java.util.Locale;
  * Background service which logs stride gait and cadence using GaitLib
  * Once logged the cadence is uploaded to the database under the specific user's key with an
  * appropriate timestamp.
- * @author Fergus Brown
+ * @author Fergus Brown s1525959
  */
 public class GaitAnalysisService extends Service {
 

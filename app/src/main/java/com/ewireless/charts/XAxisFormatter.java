@@ -8,7 +8,7 @@ import com.google.firebase.database.annotations.NotNull;
 
 /**
  * Extension of ValueFormatter used to format the X labels on the graph
- * @author Fergus Brown
+ * @author Fergus Brown s1525959
  */
 
 public class XAxisFormatter extends ValueFormatter {
