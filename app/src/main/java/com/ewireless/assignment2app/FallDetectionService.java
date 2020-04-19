@@ -52,12 +52,12 @@ public class FallDetectionService extends Service implements SensorEventListener
             Log.d(TAG, "Countdown time = " + currentTime);
         }
 
+        // on timer finish
         public void onFinish() {
             isCountRunning = false;
             sendMessage();
             time = 0;
             timer.cancel();
-            // TODO: timer sometimes immediately restarts after this -might be fixed
         }
     };
 
@@ -68,6 +68,7 @@ public class FallDetectionService extends Service implements SensorEventListener
         initialization();
         calculateOrientation();
 
+        // register sensor listener
         sm.registerListener(this, aSensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
