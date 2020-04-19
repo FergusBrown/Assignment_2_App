@@ -33,6 +33,7 @@ public class FallDetectionService extends Service implements SensorEventListener
 
     float[] accelerometerValues = new float[3];
     double aThreshold;
+    double aMax;
     double aMax0;
     double aMax2;
     double tMin1 = 90;
@@ -88,17 +89,19 @@ public class FallDetectionService extends Service implements SensorEventListener
 
         if(f < 1000 && !isCountRunning){
             f++;
+            if(aThreshold > aMax) aMax = aThreshold;
             if(accelerometerValues[0] > aMax0) aMax0 = accelerometerValues[0];
             if(accelerometerValues[2] > aMax2) aMax2 = accelerometerValues[2];
             if(Math.abs(theta1) < tMin1) tMin1 = Math.abs(theta1);
             if(Math.abs(theta2) < tMin2) tMin2 = Math.abs(theta2);
-            if(aMax0 > 18 && aMax2 > 18 && (tMin1 < 45 || tMin2 < 45)){
+            if(aMax > 25 && aMax0 > 18 && aMax2 > 18 && (tMin1 < 45 || tMin2 < 45)){
                 timer.start();
                 isCountRunning = true;
             }
         }
         else{
             f = 0;
+            aMax = 0;
             aMax0 = 0;
             aMax2 = 0;
             tMin1 = 90;
