@@ -30,27 +30,20 @@ public class FallDetectionService extends Service implements SensorEventListener
 
     private SensorManager sm;
     private Sensor aSensor;
-    private Sensor gSensor;
-    private Sensor mSensor;
 
     float[] accelerometerValues = new float[3];
-    float[] gyroscopeValues = new float[3];
-    float[] magnetometerValues = new float[3];
     double aThreshold;
-    double gThreshold;
     double aMax0;
     double aMax2;
     double tMin1 = 90;
     double tMin2 = 90;
     double theta1;
     double theta2;
-    double degree;
     long time;
     int f;
 
     private boolean isCountRunning = false;
 
-    
     // count down timer for 30 seconds
     CountDownTimer timer = new CountDownTimer(30000, 1000) {
         public void onTick(long millisUntilFinished) {
@@ -75,8 +68,6 @@ public class FallDetectionService extends Service implements SensorEventListener
         calculateOrientation();
 
         sm.registerListener(this, aSensor, SensorManager.SENSOR_DELAY_NORMAL);
-        sm.registerListener(this, gSensor, SensorManager.SENSOR_DELAY_NORMAL);
-        sm.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     @Override
@@ -88,25 +79,12 @@ public class FallDetectionService extends Service implements SensorEventListener
     private void initialization() {
         sm = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
         aSensor = sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        gSensor = sm.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
-        mSensor = sm.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
     }
 
     private void calculateOrientation() {
         aThreshold = Math.sqrt(accelerometerValues[0]*accelerometerValues[0] + accelerometerValues[1]*accelerometerValues[1] + accelerometerValues[2]*accelerometerValues[2]);
-        gThreshold = Math.sqrt(gyroscopeValues[0]*gyroscopeValues[0] + gyroscopeValues[1]*gyroscopeValues[1] + gyroscopeValues[2]*gyroscopeValues[2]);
         theta1 = Math.toDegrees(Math.atan((Math.sqrt(accelerometerValues[1]*accelerometerValues[1] + accelerometerValues[2]*accelerometerValues[2]))/(accelerometerValues[0])));
         theta2 = Math.toDegrees(Math.atan((Math.sqrt(accelerometerValues[1]*accelerometerValues[1] + accelerometerValues[0]*accelerometerValues[0]))/(accelerometerValues[2])));
-
-        float[] values = new float[3];
-        float[] R = new float[9];
-
-        SensorManager.getRotationMatrix(R, null, accelerometerValues, magnetometerValues);
-        SensorManager.getOrientation(R, values);
-
-        degree = (float) Math.toDegrees(values[2]);
-
-
 
         if(f < 1000 && !isCountRunning){
             f++;
@@ -140,12 +118,6 @@ public class FallDetectionService extends Service implements SensorEventListener
     public void onSensorChanged(SensorEvent event) {
         if(event.sensor.getType()==Sensor.TYPE_ACCELEROMETER){
             accelerometerValues = event.values;
-        }
-        if(event.sensor.getType()==Sensor.TYPE_GYROSCOPE){
-            gyroscopeValues = event.values;
-        }
-        if(event.sensor.getType()==Sensor.TYPE_MAGNETIC_FIELD){
-            magnetometerValues = event.values;
         }
         calculateOrientation();
     }
